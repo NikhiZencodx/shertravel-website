@@ -508,8 +508,12 @@ footer {
   .section { padding: 50px 20px; }
   .section-title { font-size: 30px; line-height: 1.2; }
   
-  .about-section { display: flex; flex-direction: column; gap: 30px; margin: 40px 0 !important; width: 100%; }
-  .about-right { height: auto !important; min-height: 300px; order: 2; margin-top: 10px; }
+  .about-section { display: flex; flex-direction: column; gap: 24px; margin: 40px 0 !important; width: 100%; }
+  .about-right { 
+    display: flex !important; flex-direction: column !important; gap: 20px !important; 
+    height: auto !important; min-height: 0 !important; order: 2; margin-top: 5px; 
+  }
+  .about-img { grid-row: auto !important; height: 300px !important; width: 100% !important; }
   .about-left { order: 1; }
   
   .why-section { grid-template-columns: 1fr; margin: 0 10px 40px; gap: 30px; }
