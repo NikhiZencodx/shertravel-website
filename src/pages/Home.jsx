@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PkgSlider from '../components/PkgSlider';
@@ -89,7 +90,7 @@ const Home = () => {
             <li>Comfortable & Verified Stays</li>
             <li>Customised Itineraries</li>
           </ul>
-          <a href="#packages" className="about-btn">See Our Packages</a>
+          <Link to="/packages" className="about-btn">See Our Packages</Link>
         </div>
         <div className="why-right">
           <img src="/images/dal-lake.png" alt="Kashmir Valley" />
@@ -103,7 +104,7 @@ const Home = () => {
             <p className="section-tag">Top Picks</p>
             <h2 className="section-title">We only take you to<br />the <span>best destinations</span></h2>
           </div>
-          <button className="explore-btn">Explore All</button>
+          <Link to="/packages" className="explore-btn">Explore All</Link>
         </div>
         <div className="destinations-grid">
           {[
@@ -139,7 +140,7 @@ const Home = () => {
             <p className="section-tag">What They Say</p>
             <h2 className="section-title">Loved by Travelers<br />Like You</h2>
           </div>
-          <button className="explore-btn">View All</button>
+          <Link to="/packages" className="explore-btn">View All</Link>
         </div>
         <div className="testi-grid">
           {[
@@ -170,7 +171,7 @@ const Home = () => {
             <p className="section-tag">Kashmir In Frames</p>
             <h2 className="section-title">Adventure awakens<br />your soul.</h2>
           </div>
-          <button className="explore-btn">Explore All</button>
+          <Link to="/packages" className="explore-btn">Explore All</Link>
         </div>
         <div className="gallery-grid">
           <div className="gallery-item gallery-play">

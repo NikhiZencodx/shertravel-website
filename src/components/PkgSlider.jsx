@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const PkgSlider = () => {
   const scrollRef = useRef(null);
@@ -58,21 +59,29 @@ const PkgSlider = () => {
         style={{ scrollSnapType: 'x mandatory' }}
       >
         {packages.map((pkg, i) => (
-          <div 
+          <Link 
+            to="/packages"
             key={i} 
             className={`pkg-card ${i === activeIndex ? 'active' : ''}`}
-            onClick={() => scrollTo(i)}
+            onClick={(e) => {
+              if (i !== activeIndex) {
+                e.preventDefault();
+                scrollTo(i);
+              }
+            }}
             style={{ 
               scrollSnapAlign: 'start',
               transform: i === activeIndex ? 'scale(1.06)' : 'scale(1)',
               transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               zIndex: i === activeIndex ? 2 : 1,
-              boxShadow: i === activeIndex ? '0 20px 40px rgba(0,0,0,0.2)' : 'none'
+              boxShadow: i === activeIndex ? '0 20px 40px rgba(0,0,0,0.2)' : 'none',
+              textDecoration: 'none',
+              display: 'block'
             }}
           >
             <img src={pkg.img} alt={pkg.name} />
             <div className="pkg-label">{pkg.name}</div>
-          </div>
+          </Link>
         ))}
       </div>
 

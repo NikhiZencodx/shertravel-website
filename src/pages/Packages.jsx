@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -49,7 +50,7 @@ const Packages = () => {
                       <p>Starting At</p>
                       <p>{pkg.price}</p>
                     </div>
-                    <button className="pkg-btn">Book Now</button>
+                    <Link to="/contact" className="pkg-btn" style={{ textDecoration: 'none', textAlign: 'center' }}>Book Now</Link>
                   </div>
                 </div>
               </div>
