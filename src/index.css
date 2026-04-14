@@ -493,8 +493,21 @@ footer {
     z-index: 1000; gap: 30px; align-items: flex-start;
   }
   .nav-links.active { right: 0; }
-  .nav-links li a { font-size: 20px; color: var(--dark) !important; font-weight: 800; display: block; width: 100%; }
+  .nav-links li a { font-size: 20px; color: var(--dark) !important; font-weight: 800; display: block; width: 100%; transition: color 0.3s; }
+  .nav-links li a:active { color: var(--primary); }
   .nav-links li { width: 100%; }
+
+  /* Highlight Book Now in Mobile Menu */
+  .nav-links .nav-btn {
+    background: var(--dark) !important;
+    color: var(--white) !important;
+    padding: 16px 24px !important;
+    border-radius: 50px !important;
+    text-align: center !important;
+    margin-top: 20px !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    font-size: 18px !important;
+  }
   
   .hero h1 { font-size: 42px; line-height: 1.1; margin-bottom: 24px; }
   .hero-search-bar { 
