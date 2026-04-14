@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PkgSlider from '../components/PkgSlider';
+import BookingModal from '../components/BookingModal';
 
 const Home = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDest, setSelectedDest] = useState('');
+
+  const openBooking = (destName) => {
+    setSelectedDest(destName);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="home-page">
       <Navbar />
@@ -111,11 +120,11 @@ const Home = () => {
             { name: 'Dal Lake', loc: 'Srinagar, Kashmir', rating: '4.9', img: '/images/dal-lake.png' },
             { name: 'Gulmarg', loc: 'Baramulla, Kashmir', rating: '4.8', img: '/images/gulmarg.png' },
             { name: 'Pahalgam', loc: 'Anantnag, Kashmir', rating: '4.7', img: '/images/pahalgam.png' },
-            { name: 'Sonamarg', loc: 'Ganderbal, Kashmir', rating: '4.8', img: '/images/gulmarg.png' }
+            { name: 'Sonamarg', loc: 'Ganderbal, Kashmir', rating: '4.8', img: '/images/dal-lake.png' }
           ].map((dest, i) => (
-            <div key={i} className="dest-card">
+            <div key={i} className="dest-card" onClick={() => openBooking(dest.name)}>
               <img src={dest.img} alt={dest.name} />
-              <button className="dest-fav">♡</button>
+              <button className="dest-fav" onClick={(e) => e.stopPropagation()}>♡</button>
               <div className="dest-info">
                 <div className="dest-rating">
                   <svg width="12" height="12" fill="#f59e0b" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
@@ -220,6 +229,12 @@ const Home = () => {
       </div>
 
       <Footer />
+
+      <BookingModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        destinationName={selectedDest}
+      />
     </div>
   );
 };

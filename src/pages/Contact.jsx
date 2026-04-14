@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const Contact = () => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Simulate API call
+    console.log('Contact form submitted');
+    setIsSubmitted(true);
+    // Optionally redirect after some time
+    // setTimeout(() => window.location.href = '/', 5000);
+  };
+
   return (
     <div className="contact-page">
       <Navbar />
@@ -16,36 +27,54 @@ const Contact = () => {
 
           <div className="contact-grid">
             <div className="contact-form-wrap">
-              <form className="contact-form">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }} className="form-row-mobile">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: '600' }}>Full Name</label>
-                    <input type="text" placeholder="John Doe" />
+              {isSubmitted ? (
+                <div className="modal-success" style={{ padding: '60px 20px' }}>
+                  <div className="success-icon">✓</div>
+                  <h2 style={{ fontSize: '36px', marginBottom: '16px' }}>Thank You!</h2>
+                  <p style={{ fontSize: '18px', color: 'var(--gray)', lineHeight: '1.6' }}>
+                    Your message has been received! Our travel experts will get back to you within 24 hours to help you plan your Kashmir journey.
+                  </p>
+                  <button 
+                    onClick={() => setIsSubmitted(false)}
+                    className="nav-btn" 
+                    style={{ background: 'var(--dark)', color: 'white', padding: '12px 24px', borderRadius: '12px', fontWeight: '700', marginTop: '30px', cursor: 'pointer' }}
+                  >
+                    Send Another Message
+                  </button>
+                </div>
+              ) : (
+                <form className="contact-form" onSubmit={handleSubmit}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }} className="form-row-mobile">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <label style={{ fontSize: '13px', fontWeight: '600' }}>Full Name</label>
+                      <input type="text" placeholder="John Doe" required />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <label style={{ fontSize: '13px', fontWeight: '600' }}>Email Address</label>
+                      <input type="email" placeholder="john@example.com" required />
+                    </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: '600' }}>Email Address</label>
-                    <input type="email" placeholder="john@example.com" />
+                    <label style={{ fontSize: '13px', fontWeight: '600' }}>Phone Number</label>
+                    <input type="tel" placeholder="+91 7006XXXXXX" required />
                   </div>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: '600' }}>Phone Number</label>
-                  <input type="tel" placeholder="+91 7006XXXXXX" />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: '600' }}>Subject</label>
-                  <select>
-                    <option>Booking Inquiry</option>
-                    <option>Custom Package</option>
-                    <option>General Question</option>
-                    <option>Support</option>
-                  </select>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: '600' }}>Your Message</label>
-                  <textarea placeholder="Tell us about your dream trip..." rows="5"></textarea>
-                </div>
-                <button type="submit" className="nav-btn" style={{ background: 'var(--dark)', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: '700', marginTop: '10px' }}>Send Message</button>
-              </form>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '13px', fontWeight: '600' }}>Subject</label>
+                    <select required>
+                      <option value="">Select a subject</option>
+                      <option>Booking Inquiry</option>
+                      <option>Custom Package</option>
+                      <option>General Question</option>
+                      <option>Support</option>
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '13px', fontWeight: '600' }}>Your Message</label>
+                    <textarea placeholder="Tell us about your dream trip..." rows="5" required></textarea>
+                  </div>
+                  <button type="submit" className="nav-btn" style={{ background: 'var(--dark)', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: '700', marginTop: '10px', cursor: 'pointer' }}>Send Message</button>
+                </form>
+              )}
             </div>
 
             <div className="contact-info-wrap">

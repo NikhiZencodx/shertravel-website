@@ -7,7 +7,7 @@ const Navbar = () => {
   return (
     <nav className={`header-nav ${isOpen ? 'nav-open' : ''}`}>
       <Link to="/" className="nav-logo" onClick={() => setIsOpen(false)}>
-        <img src="/images/EDUMATCH.png" alt="Shera Travels Logo" style={{ height: '220px', width: 'auto', marginTop: '-60px', marginBottom: '-60px' }} />
+        <img src="/images/EDUMATCH.png" alt="Shera Travels Logo" style={{ height: '100px', width: 'auto' }} />
       </Link>
       
       <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
