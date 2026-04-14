@@ -22,25 +22,25 @@ const Packages = () => {
             We offer a variety of packages to suit every budget and interest. Choose the one that fits your dream trip.
           </p>
 
-          <div style={{ marginTop: '50px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
+          <div className="pkg-grid">
             {packages.map((pkg, i) => (
-              <div key={i} style={{ background: 'var(--light-gray)', borderRadius: 'var(--radius)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ height: '200px', overflow: 'hidden' }}>
-                  <img src={pkg.img} alt={pkg.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div key={i} className="pkg-item">
+                <div className="pkg-img-wrap">
+                  <img src={pkg.img} alt={pkg.name} />
                 </div>
-                <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                <div className="pkg-content">
+                  <div className="pkg-header">
                     <h3 style={{ fontSize: '18px', fontWeight: '800' }}>{pkg.name}</h3>
                     <span style={{ fontSize: '12px', background: 'var(--white)', padding: '4px 10px', borderRadius: '50px', fontWeight: '600' }}>{pkg.duration}</span>
                   </div>
-                  <ul style={{ listStyle: 'none', marginBottom: '20px' }}>
+                  <ul className="pkg-feat-list">
                     {pkg.features.map((f, j) => (
                       <li key={j} style={{ fontSize: '14px', color: 'var(--gray)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ color: 'var(--gold)' }}>✓</span> {f}
                       </li>
                     ))}
                   </ul>
-                  <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #ddd', paddingTop: '16px' }}>
+                  <div className="pkg-footer">
                     <div>
                       <p style={{ fontSize: '11px', color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '1px' }}>Starting At</p>
                       <p style={{ fontSize: '20px', fontWeight: '900', color: 'var(--dark)' }}>{pkg.price}</p>

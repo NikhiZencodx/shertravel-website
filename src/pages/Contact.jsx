@@ -14,9 +14,9 @@ const Contact = () => {
             Have questions about your trip? Our Kashmir travel experts are here to help you plan the perfect itinerary.
           </p>
 
-          <div style={{ marginTop: '50px', display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 400px', gap: '60px' }}>
-            <div style={{ background: 'var(--light-gray)', padding: '40px', borderRadius: 'var(--radius)' }}>
-              <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="contact-grid">
+            <div className="contact-form-wrap">
+              <form className="contact-form">
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '13px', fontWeight: '600' }}>Full Name</label>
@@ -48,7 +48,7 @@ const Contact = () => {
               </form>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+            <div className="contact-info-wrap">
               <div>
                 <h3 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '16px' }}>Office Address</h3>
                 <p style={{ color: 'var(--gray)', fontSize: '15px', lineHeight: '1.6' }}>
@@ -60,10 +60,10 @@ const Contact = () => {
               <div>
                 <h3 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '16px' }}>Direct Contact</h3>
                 <p style={{ color: 'var(--gray)', fontSize: '15px', lineHeight: '1.6', marginBottom: '8px' }}>
-                  <strong>Phone:</strong> +91 9149406965 | 9858966518
+                  <strong>Phone:</strong> +91 9149406965 | +91 9858966518
                 </p>
                 <p style={{ color: 'var(--gray)', fontSize: '15px', lineHeight: '1.6', marginBottom: '8px' }}>
-                  <strong>Email:</strong> info@sheratravels.com
+                  <strong>Email:</strong> sheratravels21@gmail.com
                 </p>
                 <p style={{ color: 'var(--gray)', fontSize: '15px', lineHeight: '1.6' }}>
                   <strong>WhatsApp:</strong> +91 9149406965
