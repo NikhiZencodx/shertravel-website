@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import PkgSlider from '../components/PkgSlider';
 
 const Home = () => {
   return (
@@ -129,30 +130,7 @@ const Home = () => {
       </section>
 
       {/* PACKAGES SECTION */}
-      <section className="packages-section" id="packages">
-        <p className="section-tag">What We Offer</p>
-        <h2 className="section-title">Tailored packages for<br />every traveler</h2>
-
-        <div className="packages-scroll">
-          {[
-            { name: 'Trekking', img: '/images/pahalgam.png' },
-            { name: 'Skiing', img: '/images/gulmarg.png' },
-            { name: 'Houseboat Stay', img: '/images/dal-lake.png', active: true },
-            { name: 'Pilgrimage', img: '/amarnath-yatra.jpg' },
-            { name: 'Adventure', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80' },
-            { name: 'Honeymoon', img: '/images/dal-lake.png' },
-            { name: 'Family Tour', img: '/images/family-tour.png' }
-          ].map((pkg, i) => (
-            <div key={i} className={`pkg-card ${pkg.active ? 'active' : ''}`} style={pkg.active ? { transform: 'scale(1.06)', zIndex: 2, boxShadow: '0 20px 40px rgba(0,0,0,0.2)' } : {}}>
-              <img src={pkg.img} alt={pkg.name} />
-              <div className="pkg-label">{pkg.name}</div>
-            </div>
-          ))}
-        </div>
-        <div className="pkg-active-dot">
-          <span></span><span className="active"></span><span></span><span></span>
-        </div>
-      </section>
+      <PkgSlider />
 
       {/* TESTIMONIALS SECTION */}
       <section className="testimonials-section" id="reviews">
