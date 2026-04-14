@@ -23,9 +23,9 @@ const Destinations = () => {
             Discover the most beautiful spots in Kashmir. From serene lakes to majestic mountains, we have curated the best for you.
           </p>
           
-          <div className="destinations-grid" style={{ marginTop: '50px' }}>
+          <div className="destinations-grid">
             {destinations.map((dest, i) => (
-              <div key={i} className="dest-card" style={{ height: '320px' }}>
+              <div key={i} className="dest-card">
                 <img src={dest.img} alt={dest.name} />
                 <button className="dest-fav">♡</button>
                 <div className="dest-info">
@@ -35,9 +35,8 @@ const Destinations = () => {
                   </div>
                   <div className="dest-name">{dest.name}</div>
                   <div className="dest-location">📍 {dest.loc}</div>
-                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '8px', lineHeight: '1.4' }}>{dest.desc}</p>
+                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', marginTop: '8px', lineHeight: '1.5' }}>{dest.desc}</p>
                 </div>
-                <div className="dest-arrow">→</div>
               </div>
             ))}
           </div>
