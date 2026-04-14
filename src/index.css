@@ -450,15 +450,18 @@ footer {
   .nav-logo img { height: 160px !important; margin-top: -40px !important; margin-bottom: -40px !important; }
   
   .menu-toggle { display: block; }
+  .home-page .menu-toggle { color: var(--white); }
+  .nav-open .menu-toggle { color: var(--dark) !important; }
   
   .nav-links {
-    position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
-    background: var(--white); flex-direction: column; padding: 100px 40px;
-    box-shadow: -10px 0 30px rgba(0,0,0,0.1); transition: right 0.4s ease;
-    z-index: 1000; gap: 25px; align-items: flex-start;
+    position: fixed; top: 0; right: -100%; width: 300px; height: 100vh;
+    background: var(--white); flex-direction: column; padding: 120px 50px;
+    box-shadow: -10px 0 50px rgba(0,0,0,0.15); transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: 1000; gap: 30px; align-items: flex-start;
   }
   .nav-links.active { right: 0; }
-  .nav-links li a { font-size: 18px; color: var(--dark); font-weight: 700; }
+  .nav-links li a { font-size: 20px; color: var(--dark) !important; font-weight: 800; display: block; width: 100%; }
+  .nav-links li { width: 100%; }
   
   .hero h1 { font-size: 42px; line-height: 1.1; margin-bottom: 24px; }
   .hero-search-bar { 
