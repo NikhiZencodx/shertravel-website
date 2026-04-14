@@ -25,7 +25,7 @@ const About = () => {
           </div>
         </section>
 
-        <section className="section" style={{ background: '#fafafa', borderRadius: '40px', marginTop: '40px' }}>
+        <section className="section" style={{ background: '#fafafa', borderRadius: '40px' }}>
           <div style={{ textAlign: 'center', maxWidth: '1000px', margin: '0 auto' }}>
             <p className="section-tag">Our Values</p>
             <h2 className="section-title" style={{ marginBottom: '10px' }}>Integrity, Passion, and Excellence</h2>
