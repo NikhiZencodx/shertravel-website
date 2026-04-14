@@ -114,7 +114,7 @@ const BookingModal = ({ isOpen, onClose, destinationName }) => {
                 <label>Special Requests (Optional)</label>
                 <textarea 
                   name="message" 
-                  rows="3" 
+                  rows="2" 
                   placeholder="Anything else we should know?"
                   value={formData.message}
                   onChange={handleChange}

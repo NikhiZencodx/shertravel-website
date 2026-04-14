@@ -749,15 +749,73 @@ footer {
   to { transform: scale(1); }
 }
 
+/* ── MOBILE MODAL OPTIMIZATIONS ────────────────────────── */
 @media (max-width: 650px) {
+  .modal-overlay {
+    padding: 10px;
+  }
   .modal-content {
-    padding: 30px 24px;
-    border-radius: 24px;
+    padding: 24px 20px 20px;
+    border-radius: 20px;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+  .modal-close {
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+  .modal-header {
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  .modal-header .section-tag {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .modal-header h2 {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .modal-header p {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .booking-form {
+    gap: 12px;
   }
   .form-row {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
-  .modal-header h2 {
-    font-size: 26px;
+  .form-group {
+    gap: 4px;
+  }
+  .form-group label {
+    font-size: 12px;
+    margin-left: 2px;
+  }
+  .booking-form input,
+  .booking-form select,
+  .booking-form textarea {
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+  .submit-btn {
+    padding: 12px;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  .modal-success h2 {
+    font-size: 24px;
+  }
+  .success-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+    margin-bottom: 15px;
   }
 }
