@@ -463,8 +463,8 @@ footer {
 .social-icon-box:hover { background: var(--dark); color: var(--white); transform: translateY(-3px); }
 
 @media (max-width: 900px) {
-  .destinations-grid { grid-template-columns: 1fr; }
-  .val-grid { grid-template-columns: 1fr; }
+  .destinations-grid { grid-template-columns: 1fr; gap: 40px; }
+  .val-grid { grid-template-columns: 1fr; gap: 40px; margin-top: 60px; }
   .footer-nav { order: 2; width: 100%; justify-content: center; }
   .footer-logo { order: 1; }
   .footer-social { order: 3; width: 100%; justify-content: center; }
@@ -498,24 +498,28 @@ footer {
   
   .hero h1 { font-size: 42px; line-height: 1.1; margin-bottom: 24px; }
   .hero-search-bar { 
-    flex-direction: column; width: 100%; border-radius: 16px; padding: 10px;
-    max-width: 400px; gap: 0;
+    flex-direction: column; width: 100%; border-radius: 20px; padding: 15px;
+    max-width: 420px; gap: 0; margin-top: 35px;
   }
-  .search-field { width: 100%; padding: 15px 20px; border-right: none; border-bottom: 1px solid #eee; }
+  .search-field { width: 100%; padding: 18px 24px; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
   .search-field:last-of-type { border-bottom: none; }
-  .search-btn { width: 100%; border-radius: 12px; margin-top: 10px; padding: 16px; justify-content: center; }
+  .search-btn { width: 100%; border-radius: 12px; margin-top: 15px; padding: 18px; justify-content: center; font-size: 16px; }
 
-  .section { padding: 60px 20px; }
-  .section-title { font-size: 32px; }
+  .section { padding: 50px 20px; }
+  .section-title { font-size: 30px; line-height: 1.2; }
   
-  .about-section { grid-template-columns: 1fr; gap: 30px; margin: 20px 0 !important; }
-  .about-right { height: 320px !important; }
+  .about-section { display: flex; flex-direction: column; gap: 30px; margin: 40px 0 !important; width: 100%; }
+  .about-right { height: auto !important; min-height: 300px; order: 2; margin-top: 10px; }
+  .about-left { order: 1; }
   
-  .why-section { grid-template-columns: 1fr; margin: 0 10px 40px; }
-  .why-right { height: 280px; }
+  .why-section { grid-template-columns: 1fr; margin: 0 10px 40px; gap: 30px; }
+  .why-right { height: 300px; }
   
   .destinations-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .dest-card { height: 220px; }
+  
+  .packages-scroll { gap: 12px !important; padding: 20px 0 40px !important; }
+  .pkg-card { min-width: 180px !important; height: 240px !important; border-radius: 20px !important; }
   
   .testi-grid { grid-template-columns: 1fr; gap: 20px; }
   

@@ -20,12 +20,12 @@ const About = () => {
               </p>
             </div>
             <div className="about-right">
-              <img src="/images/dal-lake.png" alt="Our Story" style={{ borderRadius: '24px' }} />
+              <img src="/images/dal-lake.png" alt="Our Story" style={{ borderRadius: '24px', width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           </div>
         </section>
 
-        <section className="section" style={{ background: '#fafafa', borderRadius: '32px' }}>
+        <section className="section" style={{ background: '#fafafa', borderRadius: '40px', marginTop: '40px' }}>
           <div style={{ textAlign: 'center', maxWidth: '1000px', margin: '0 auto' }}>
             <p className="section-tag">Our Values</p>
             <h2 className="section-title" style={{ marginBottom: '10px' }}>Integrity, Passion, and Excellence</h2>

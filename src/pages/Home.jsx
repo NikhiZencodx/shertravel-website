@@ -79,7 +79,7 @@ const Home = () => {
       <div className="divider"></div>
 
       {/* WHY US SECTION */}
-      <section className="why-section">
+      <section className="why-section" style={{ borderRadius: '40px' }}>
         <div className="why-left">
           <h2>Why Choose<br />Shera Travels</h2>
           <ul className="why-list">
@@ -90,10 +90,10 @@ const Home = () => {
             <li>Comfortable & Verified Stays</li>
             <li>Customised Itineraries</li>
           </ul>
-          <Link to="/packages" className="about-btn">See Our Packages</Link>
+          <Link to="/packages" className="about-btn" style={{ marginTop: '20px' }}>See Our Packages</Link>
         </div>
-        <div className="why-right">
-          <img src="/images/dal-lake.png" alt="Kashmir Valley" />
+        <div className="why-right" style={{ overflow: 'hidden', borderRadius: '24px' }}>
+          <img src="/images/dal-lake.png" alt="Kashmir Valley" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
       </section>
 
