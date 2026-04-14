@@ -468,6 +468,7 @@ footer {
   .footer-nav { order: 2; width: 100%; justify-content: center; }
   .footer-logo { order: 1; }
   .footer-social { order: 3; width: 100%; justify-content: center; }
+  .val-card { padding: 30px 20px; }
 }
 
 /* ── RESPONSIVE HELPERS ────────────────────────────────── */
@@ -507,8 +508,8 @@ footer {
   .section { padding: 60px 20px; }
   .section-title { font-size: 32px; }
   
-  .about-section { grid-template-columns: 1fr; gap: 30px; }
-  .about-right { grid-template-columns: 1fr 1fr; }
+  .about-section { grid-template-columns: 1fr; gap: 30px; margin: 20px 0 !important; }
+  .about-right { height: 320px !important; }
   
   .why-section { grid-template-columns: 1fr; margin: 0 10px 40px; }
   .why-right { height: 280px; }

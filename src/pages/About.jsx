@@ -10,7 +10,7 @@ const About = () => {
         <section className="section">
           <p className="section-tag">Explore Our Story</p>
           <h2 className="section-title">We are Shera Travels</h2>
-          <div className="about-section" style={{ marginTop: '0', background: 'transparent', padding: '0', margin: '40px 0 0' }}>
+          <div className="about-section" style={{ marginTop: '0', background: 'transparent', padding: '0' }}>
             <div className="about-left">
               <p style={{ fontSize: '16px', color: 'var(--gray)', lineHeight: '1.8', marginBottom: '20px' }}>
                 Born in the heart of Kashmir, Shera Travels was founded with a single mission: to provide travelers with an authentic, safe, and breathtaking experience of the Paradise on Earth.
@@ -19,13 +19,13 @@ const About = () => {
                 With over a decade of experience, we have hosted thousands of guests, from solo adventurers to honeymooning couples and large families. Our deep local knowledge ensures that you don't just see Kashmir—you feel it.
               </p>
             </div>
-            <div className="about-right" style={{ height: '450px' }}>
+            <div className="about-right">
               <img src="/images/dal-lake.png" alt="Our Story" style={{ borderRadius: '24px' }} />
             </div>
           </div>
         </section>
 
-        <section className="section" style={{ background: '#fafafa', borderRadius: '32px', margin: '0 20px 60px' }}>
+        <section className="section" style={{ background: '#fafafa', borderRadius: '32px' }}>
           <div style={{ textAlign: 'center', maxWidth: '1000px', margin: '0 auto' }}>
             <p className="section-tag">Our Values</p>
             <h2 className="section-title" style={{ marginBottom: '10px' }}>Integrity, Passion, and Excellence</h2>
