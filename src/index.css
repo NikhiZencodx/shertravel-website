@@ -56,6 +56,29 @@ nav.header-nav {
 }
 .nav-btn:hover { opacity: 0.88; }
 
+/* ── CRM BUTTON ────────────────────────────────────────── */
+.nav-crm-icon {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(212, 175, 55, 0.15); 
+  border: 1.5px solid var(--accent);
+  color: var(--accent); padding: 8px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  transition: all 0.2s; white-space: nowrap;
+}
+.nav-crm-icon:hover { background: var(--accent); color: var(--dark); }
+
+.nav-crm-btn {
+  display: block; width: 100%;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1.5px solid var(--accent);
+  color: var(--accent) !important;
+  padding: 14px 24px; border-radius: 50px;
+  text-align: center; font-size: 15px; font-weight: 700;
+  text-decoration: none; margin-top: 12px;
+  transition: all 0.2s;
+}
+.nav-crm-btn:hover { background: var(--accent); color: var(--dark) !important; }
+
 /* ── HOME PAGE NAV OVERRIDES ───────────────────────────── */
 .home-page nav.header-nav { position: absolute; }
 .home-page .nav-logo { color: var(--white); }

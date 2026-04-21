@@ -18,8 +18,19 @@ const Navbar = () => {
             <li><Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link></li>
             <li><Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link></li>
             <li className="mobile-only"><Link to="/contact" className="nav-btn" onClick={() => setIsOpen(false)}>Book Now</Link></li>
+            <li className="mobile-only">
+              <a href="https://sheratravels-orcin.vercel.app/" target="_blank" rel="noopener noreferrer" className="nav-crm-btn" onClick={() => setIsOpen(false)}>
+                🔐 CRM Login
+              </a>
+            </li>
           </ul>
           
+          <a href="https://sheratravels-orcin.vercel.app/" target="_blank" rel="noopener noreferrer" className="nav-crm-icon desktop-only" title="Open CRM">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+            </svg>
+            <span>CRM</span>
+          </a>
           <Link to="/contact" className="nav-btn desktop-only">Book Now</Link>
           
           <button className="menu-btn" onClick={() => setIsOpen(!isOpen)} aria-label="Menu">
