@@ -1,13 +1,26 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PkgSlider from '../components/PkgSlider';
 import BookingModal from '../components/BookingModal';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDest, setSelectedDest] = useState('');
+  const [destination, setDestination] = useState('');
+  const [duration, setDuration] = useState('');
+  const [guests, setGuests] = useState('');
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (destination) params.append('dest', destination);
+    if (duration) params.append('dur', duration);
+    if (guests) params.append('guests', guests);
+    navigate(`/packages?${params.toString()}`);
+  };
 
   const openBooking = (destName) => {
     setSelectedDest(destName);
@@ -24,34 +37,66 @@ const Home = () => {
         <div className="hero-content">
           <div className="badge"><span className="badge-dot"></span> Kashmir's #1 Travel Partner</div>
           <h1>Discover<br />Paradise<br />With Us</h1>
-          <div className="hero-search-bar">
+          <form className="hero-search-bar" onSubmit={handleSearch}>
             <div className="search-field">
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              <div><span className="label">Destination</span> Kashmir</div>
+              <div>
+                <span className="label">Destination</span>
+                <input 
+                  type="text" 
+                  placeholder="Kashmir" 
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  className="search-input"
+                />
+              </div>
             </div>
             <div className="search-field">
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-              <div><span className="label">Duration</span> Choose Days</div>
+              <div>
+                <span className="label">Duration</span>
+                <select 
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  className="search-input"
+                >
+                  <option value="">Choose Days</option>
+                  <option value="Short">3-4 Days</option>
+                  <option value="Medium">5-7 Days</option>
+                  <option value="Long">8+ Days</option>
+                </select>
+              </div>
             </div>
             <div className="search-field">
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>
-              <div><span className="label">Guests</span> 1–10</div>
+              <div>
+                <span className="label">Guests</span>
+                <input 
+                  type="number" 
+                  placeholder="1–10" 
+                  min="1"
+                  max="50"
+                  value={guests}
+                  onChange={(e) => setGuests(e.target.value)}
+                  className="search-input"
+                />
+              </div>
             </div>
-            <button className="search-btn">
+            <button type="submit" className="search-btn">
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
               Search
             </button>
-          </div>
+          </form>
         </div>
       </section>
 
       {/* ABOUT SECTION */}
       <section className="about-section" id="about">
         <div className="about-left">
-          <p className="section-tag">Who We Are</p>
-          <h2>About Shera Travels</h2>
-          <p>Shera Travels crafts unforgettable journeys through the breathtaking landscapes of Kashmir — from the shimmering Dal Lake to the snow-capped peaks of Gulmarg. With deep local roots and a passion for authentic experiences, we bring you the true soul of the Valley.</p>
-          <p>We handle everything — from comfortable houseboats on Dal Lake to guided treks in Pahalgam — so you can simply breathe in the beauty of Kashmir.</p>
+          <p className="section-tag">Experience</p>
+          <h2>Crafting Unforgettable Kashmir Memories</h2>
+          <p>Shera Travels brings you the soul of the Valley. From the shimmering Dal Lake to the snow-capped peaks of Gulmarg, we curate high-end, authentic experiences designed for the modern traveler.</p>
+          <p>We handle every detail—luxury houseboats, private guided tours, and hidden culinary gems—so you can immerse yourself in the sheer beauty of Paradise.</p>
           <div className="about-stats">
             <div className="stat-item">
               <h3>5000+</h3>

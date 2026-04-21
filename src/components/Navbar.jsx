@@ -11,7 +11,7 @@ const Navbar = () => {
       </Link>
       
       <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           {isOpen ? (
             <path d="M18 6L6 18M6 6l12 12" />
           ) : (
@@ -24,11 +24,14 @@ const Navbar = () => {
         </svg>
       </button>
 
+      {isOpen && <div className="nav-overlay" onClick={() => setIsOpen(false)}></div>}
+
       <ul className={`nav-links ${isOpen ? 'active' : ''}`}>
         <li><Link to="/destinations" onClick={() => setIsOpen(false)}>Destinations</Link></li>
         <li><Link to="/packages" onClick={() => setIsOpen(false)}>Packages</Link></li>
         <li><Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link></li>
         <li><Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link></li>
+        <li><Link to="/crm" onClick={() => setIsOpen(false)}>CRM</Link></li>
         <li className="mobile-only"><Link to="/contact" className="nav-btn" onClick={() => setIsOpen(false)}>Book Now</Link></li>
       </ul>
       

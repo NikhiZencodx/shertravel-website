@@ -15,9 +15,17 @@ function App() {
         <Route path="/destinations" element={<Destinations />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/crm" element={<RedirectToExternal url="https://sheratravels-orcin.vercel.app/" />} />
       </Routes>
     </Router>
   );
+}
+
+function RedirectToExternal({ url }) {
+  React.useEffect(() => {
+    window.location.href = url;
+  }, [url]);
+  return null;
 }
 
 export default App;
