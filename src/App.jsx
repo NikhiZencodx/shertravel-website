@@ -15,7 +15,7 @@ function App() {
         <Route path="/destinations" element={<Destinations />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/crm" element={<RedirectToExternal url="https://sheratravels-orcin.vercel.app/" />} />
+        <Route path="/crm" element={<RedirectToExternal url="/crm/" />} />
       </Routes>
     </Router>
   );
