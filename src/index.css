@@ -527,6 +527,7 @@ nav.header-nav {
 /* ── RESPONSIVE HELPERS ────────────────────────────────── */
 .mobile-only { display: none !important; }
 .menu-btn { display: none; }
+.nav-links-mobile { display: none; }
 
 @media (max-width: 900px) {
   .desktop-only { display: none !important; }
@@ -590,10 +591,11 @@ nav.header-nav {
 
   /* Mobile slide-in drawer */
   .nav-links-mobile {
+    display: flex;
     position: fixed; top: 0; right: -100%; width: 72%; max-width: 300px; height: 100vh;
     background: #fff; flex-direction: column; padding: 80px 24px 32px;
     box-shadow: -8px 0 40px rgba(0,0,0,0.18); transition: right 0.3s ease;
-    z-index: 10000; list-style: none; margin: 0; display: flex; gap: 0; align-items: stretch;
+    z-index: 10000; list-style: none; margin: 0; gap: 0; align-items: stretch;
   }
   .nav-links-mobile.active { right: 0; }
   .nav-links-mobile li { width: 100%; border-bottom: 1px solid #f0f0f0; }
