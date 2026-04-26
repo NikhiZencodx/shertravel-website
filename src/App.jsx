@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Destinations from './pages/Destinations';
 import Packages from './pages/Packages';
+import Services from './pages/Services';
 import Contact from './pages/Contact';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/destinations" element={<Destinations />} />
         <Route path="/packages" element={<Packages />} />
+        <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/crm" element={<RedirectToExternal url="/crm/" />} />
       </Routes>

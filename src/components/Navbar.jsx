@@ -15,6 +15,7 @@ const Navbar = () => {
           <ul className="nav-links">
             <li><Link to="/destinations">Destinations</Link></li>
             <li><Link to="/packages">Packages</Link></li>
+            <li><Link to="/services">Services</Link></li>
             <li><Link to="/about">About Us</Link></li>
             <li><Link to="/contact">Contact Us</Link></li>
           </ul>
@@ -26,6 +27,7 @@ const Navbar = () => {
           <ul className={`nav-links-mobile ${isOpen ? 'active' : ''}`}>
             <li><Link to="/destinations" onClick={() => setIsOpen(false)}>Destinations</Link></li>
             <li><Link to="/packages" onClick={() => setIsOpen(false)}>Packages</Link></li>
+            <li><Link to="/services" onClick={() => setIsOpen(false)}>Services</Link></li>
             <li><Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link></li>
             <li><Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link></li>
             <li><Link to="/contact" className="nav-btn-mobile" onClick={() => setIsOpen(false)}>Book Now</Link></li>
