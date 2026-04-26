@@ -50,16 +50,19 @@ const Footer = () => {
         <div className="footer-nav">
           <h4>Contact Us</h4>
           <ul>
-            <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>📍 Srinagar, Kashmir</li>
-            <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>📞 +91 9149406965</li>
-            <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>✉️ booking@sheratravels.com</li>
+            <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>📍 Radio Colony Lawaypora, Srinagar J&K - 190017</li>
+            <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>📞 +91 9149406965, 9858966518</li>
+            <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>✉️ sheratravels21@gmail.com</li>
+            <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>✉️ info@sheratravels.com</li>
+            <li style={{ color: 'rgba(212,175,55,0.9)', fontSize: '13px', marginTop: '6px', fontWeight: '600' }}>GST: 01KODPS7232P1ZE</li>
           </ul>
         </div>
       </div>
 
       <div className="footer-bottom">
         <span>© 2025 Shera Travels. All rights reserved.</span>
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <span style={{ color: 'rgba(212,175,55,0.8)', fontSize: '13px' }}>GST No: 01KODPS7232P1ZE</span>
           <span>Crafted with ❤️ for Kashmir</span>
         </div>
       </div>

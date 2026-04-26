@@ -9,7 +9,8 @@ const Packages = () => {
     { name: 'Gulmarg Adventure Blast', duration: '3 Days / 2 Nights', price: '₹9,999', img: '/images/gulmarg.png', status: 'POPULAR', features: ['Gondola Ride', 'Skiing Session', 'Winter Jacket Rental'] },
     { name: 'Pure Valley Honeymoon', duration: '6 Days / 5 Nights', price: '₹28,999', img: '/images/pahalgam.png', status: 'RECOMMENDED', features: ['Candlelight Dinner', 'Flower Decor', 'Private Car', 'Pahalgam Stay'] },
     { name: 'Amarnath Yatra Special', duration: '5 Days / 4 Nights', price: '₹15,499', img: '/amarnath-yatra.jpg', status: 'SPECIAL', features: ['Helicopter Booking', 'Shikara Stay', 'Temple Tours'] },
-    { name: 'The Great Kashmir Trek', duration: '8 Days / 7 Nights', price: '₹32,000', img: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80', status: 'ADVENTURE', features: ['Expert Mountain Guides', 'Camping Gear', 'All Meals Included'] }
+    { name: 'The Great Kashmir Trek', duration: '8 Days / 7 Nights', price: '₹32,000', img: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80', status: 'ADVENTURE', features: ['Expert Mountain Guides', 'Camping Gear', 'All Meals Included'] },
+    { name: 'Leh Ladakh Explorer', duration: '7 Days / 6 Nights', price: '₹24,999', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80', status: 'NEW', features: ['Pangong Lake Visit', 'Nubra Valley Stay', 'Monastery Tours', 'Bike Safari'] },
   ];
 
   const [searchParams] = useSearchParams();
