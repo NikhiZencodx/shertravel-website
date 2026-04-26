@@ -40,51 +40,73 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); font-weight: 700; }
 nav.header-nav {
   position: absolute; top: 0; left: 0; right: 0; z-index: 1000;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 30px 80px;
+  padding: 0 64px;
+  height: 76px;
   background: transparent;
 }
-.nav-logo { font-size: 24px; font-weight: 900; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-.nav-logo img { height: 100px; width: auto; }
-.nav-right { display: flex; align-items: center; gap: 40px; }
-.nav-links { display: flex; gap: 40px; list-style: none; align-items: center; }
-.nav-links li a { text-decoration: none; color: var(--white); font-size: 15px; font-weight: 500; opacity: 0.85; transition: 0.3s; }
-.nav-links li a:hover { opacity: 1; color: var(--accent); }
+.nav-logo {
+  font-size: 22px; font-weight: 900; color: var(--white);
+  text-decoration: none; display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+}
+.nav-logo img { height: 52px; width: auto; object-fit: contain; }
+.nav-center {
+  display: flex; align-items: center; position: absolute;
+  left: 50%; transform: translateX(-50%);
+}
+.nav-links {
+  display: flex; gap: 36px; list-style: none; align-items: center; margin: 0; padding: 0;
+}
+.nav-links li a {
+  text-decoration: none; color: rgba(255,255,255,0.88);
+  font-size: 14.5px; font-weight: 500; letter-spacing: 0.01em;
+  transition: color 0.2s, opacity 0.2s; white-space: nowrap;
+}
+.nav-links li a:hover { color: #fff; opacity: 1; }
+.nav-right {
+  display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+}
 .nav-btn {
-  background: var(--dark); color: var(--white); border: none;
-  padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600;
-  cursor: pointer; transition: opacity .2s; text-decoration: none;
+  background: var(--white); color: var(--dark); border: none;
+  padding: 10px 24px; border-radius: 50px; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+  white-space: nowrap; letter-spacing: 0.01em;
 }
-.nav-btn:hover { opacity: 0.88; }
-
-/* ── CRM BUTTON ────────────────────────────────────────── */
-.nav-crm-icon {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(212, 175, 55, 0.15); 
-  border: 1.5px solid var(--accent);
-  color: var(--accent); padding: 8px 14px; border-radius: 8px;
-  font-size: 13px; font-weight: 700; text-decoration: none;
-  transition: all 0.2s; white-space: nowrap;
-}
-.nav-crm-icon:hover { background: var(--accent); color: var(--dark); }
-
-.nav-crm-btn {
-  display: block; width: 100%;
-  background: rgba(212, 175, 55, 0.1);
-  border: 1.5px solid var(--accent);
-  color: var(--accent) !important;
-  padding: 14px 24px; border-radius: 50px;
-  text-align: center; font-size: 15px; font-weight: 700;
-  text-decoration: none; margin-top: 12px;
-  transition: all 0.2s;
-}
-.nav-crm-btn:hover { background: var(--accent); color: var(--dark) !important; }
+.nav-btn:hover { background: #f0f0f0; transform: translateY(-1px); }
 
 /* ── HOME PAGE NAV OVERRIDES ───────────────────────────── */
 .home-page nav.header-nav { position: absolute; }
 .home-page .nav-logo { color: var(--white); }
-.home-page .nav-links a { color: rgba(255,255,255,0.85); }
+.home-page .nav-links a { color: rgba(255,255,255,0.88); }
 .home-page .nav-links a:hover { color: #fff; }
 .home-page .nav-btn { background: var(--white); color: var(--dark); }
+
+/* non-home pages: dark nav text */
+.about-page nav.header-nav,
+.packages-page nav.header-nav,
+.destinations-page nav.header-nav,
+.contact-page nav.header-nav {
+  position: fixed; background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+.about-page .nav-links a,
+.packages-page .nav-links a,
+.destinations-page .nav-links a,
+.contact-page .nav-links a { color: var(--dark); }
+.about-page .nav-links a:hover,
+.packages-page .nav-links a:hover,
+.destinations-page .nav-links a:hover,
+.contact-page .nav-links a:hover { color: var(--primary); }
+.about-page .nav-btn,
+.packages-page .nav-btn,
+.destinations-page .nav-btn,
+.contact-page .nav-btn { background: var(--primary); color: var(--white); }
+.about-page .nav-btn:hover,
+.packages-page .nav-btn:hover,
+.destinations-page .nav-btn:hover,
+.contact-page .nav-btn:hover { background: var(--primary-light); }
 
 /* ── HERO ──────────────────────────────────────────────── */
 .hero {
@@ -99,7 +121,16 @@ nav.header-nav {
 }
 @keyframes zoomOut { from { transform: scale(1.05); } to { transform: scale(1.2); } }
 .hero-content {
-  max-width: 700px; margin-bottom: 36px;
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; width: 100%; max-width: 960px;
+  padding: 0 24px;
+}
+.hero-content h1 {
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 900; color: #fff;
+  line-height: 1.05; letter-spacing: -2px;
+  margin: 16px 0 32px;
 }
 .hero-search-bar {
   display: flex; align-items: center; gap: 0;
@@ -530,60 +561,75 @@ footer {
     flex-shrink: 0;
   }
   
-  nav.header-nav { 
-    padding: 12px 16px !important; 
+  nav.header-nav {
+    padding: 0 16px !important;
+    height: 64px !important;
     position: fixed !important;
     top: 0; left: 0; right: 0;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    background: rgba(0, 77, 64, 0.95) !important;
-    backdrop-filter: blur(10px);
+    background: rgba(10, 60, 50, 0.97) !important;
+    backdrop-filter: blur(12px);
     z-index: 9999;
   }
-  .home-page nav.header-nav { 
-    background: rgba(0, 77, 64, 0.95) !important;
+  .home-page nav.header-nav,
+  .about-page nav.header-nav,
+  .packages-page nav.header-nav,
+  .destinations-page nav.header-nav,
+  .contact-page nav.header-nav {
+    background: rgba(10, 60, 50, 0.97) !important;
+    border-bottom: none !important;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.2) !important;
   }
+  .about-page .nav-links a,
+  .packages-page .nav-links a,
+  .destinations-page .nav-links a,
+  .contact-page .nav-links a { color: rgba(255,255,255,0.88) !important; }
+  .about-page .nav-btn,
+  .packages-page .nav-btn,
+  .destinations-page .nav-btn,
+  .contact-page .nav-btn { background: var(--white) !important; color: var(--dark) !important; }
+
+  .nav-center { display: none !important; }
   .nav-logo { flex-shrink: 0; z-index: 10001; }
-  .nav-logo img { height: 50px !important; width: auto !important; }
-  
+  .nav-logo img { height: 44px !important; width: auto !important; }
+
   .nav-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998;
     opacity: 0; visibility: hidden; transition: 0.3s; display: block;
   }
   .nav-open .nav-overlay { opacity: 1; visibility: visible; }
-  
-  .nav-links {
-    position: fixed; top: 0; right: -100%; width: 75%; max-width: 280px; height: 100vh;
-    background: #fff; flex-direction: column; padding: 80px 24px 30px;
-    box-shadow: -10px 0 50px rgba(0,0,0,0.2); transition: right 0.3s ease;
-    z-index: 10000; gap: 0; align-items: stretch;
-  }
-  .nav-links.active { right: 0; }
-  .nav-links li { width: 100%; border-bottom: 1px solid #eee; }
-  .nav-links li a { 
-    font-size: 16px; color: #1e293b !important; font-weight: 600; 
-    display: block; width: 100%; padding: 16px 0; transition: color 0.3s; 
-  }
-  .nav-links li a:active { color: var(--primary) !important; }
 
-  .nav-links .nav-btn {
-    background: #004d40 !important;
-    color: #fff !important;
-    padding: 14px 24px !important;
-    border-radius: 50px !important;
-    text-align: center !important;
-    margin-top: 20px !important;
-    font-size: 15px !important;
-    width: 100%;
-    display: block;
+  /* Mobile slide-in drawer */
+  .nav-links-mobile {
+    position: fixed; top: 0; right: -100%; width: 72%; max-width: 300px; height: 100vh;
+    background: #fff; flex-direction: column; padding: 80px 24px 32px;
+    box-shadow: -8px 0 40px rgba(0,0,0,0.18); transition: right 0.3s ease;
+    z-index: 10000; list-style: none; margin: 0; display: flex; gap: 0; align-items: stretch;
+  }
+  .nav-links-mobile.active { right: 0; }
+  .nav-links-mobile li { width: 100%; border-bottom: 1px solid #f0f0f0; }
+  .nav-links-mobile li:last-child { border-bottom: none; }
+  .nav-links-mobile li a {
+    font-size: 16px; color: var(--dark) !important; font-weight: 600;
+    display: block; width: 100%; padding: 16px 4px; transition: color 0.2s;
+    text-decoration: none;
+  }
+  .nav-links-mobile li a:active { color: var(--primary) !important; }
+  .nav-btn-mobile {
+    display: block; width: 100%; margin-top: 24px;
+    background: var(--primary) !important; color: #fff !important;
+    padding: 14px 24px; border-radius: 50px;
+    text-align: center; font-size: 15px; font-weight: 700;
+    text-decoration: none; transition: background 0.2s;
   }
 
-  .page-container { padding-top: 90px; }
+  .page-container { padding-top: 80px; }
 
-  .hero { min-height: 100vh; height: auto; min-height: 600px; padding: 100px 20px 60px; }
-  .hero-content { max-width: 100%; padding: 0 10px; }
-  .hero h1 { font-size: 32px; line-height: 1.15; margin-bottom: 24px; }
+  .hero { min-height: 100svh; padding: 80px 20px 60px; }
+  .hero-content { padding: 0 8px; }
+  .hero-content h1 { font-size: 42px; line-height: 1.08; letter-spacing: -1px; margin: 12px 0 24px; }
   
   .hero-search-bar { 
     flex-direction: column; width: 100%; border-radius: 20px; padding: 15px;
@@ -650,7 +696,7 @@ footer {
 }
 
 @media (max-width: 500px) {
-  .hero h1 { font-size: 34px; }
+  .hero-content h1 { font-size: 34px; }
   .destinations-grid { grid-template-columns: 1fr; }
   .about-right { grid-template-columns: 1fr; height: auto; }
   .about-img { height: 240px; }
@@ -998,7 +1044,7 @@ footer { background: var(--black); color: var(--white); padding: 80px 80px 40px;
   .section-title { font-size: 26px; }
   .section-tag { font-size: 11px; }
   .pkg-grid { gap: 16px; }
-  .hero h1 { font-size: 30px; }
+  .hero-content h1 { font-size: 30px !important; }
   .about-legal-card { padding: 20px 16px; }
   .footer-grid { gap: 24px !important; }
   .footer-logo { font-size: 22px; }
