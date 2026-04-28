@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import BookingModal from '../components/BookingModal';
 
 const Packages = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPkg, setSelectedPkg] = useState(null);
+
+  const openBooking = (pkg) => {
+    setSelectedPkg(pkg);
+    setModalOpen(true);
+  };
+
   const packages = [
     { name: 'Kashmir Paradise Express', duration: '4 Days / 3 Nights', price: '₹12,499', img: '/images/dal-lake.png', status: 'BEST SELLER', features: ['Dal Lake Shikara Ride', 'Houseboat Stay', 'Srinagar Sightseeing'] },
     { name: 'Gulmarg Adventure Blast', duration: '3 Days / 2 Nights', price: '₹9,999', img: '/images/gulmarg.png', status: 'POPULAR', features: ['Gondola Ride', 'Skiing Session', 'Winter Jacket Rental'] },
@@ -70,7 +79,7 @@ const Packages = () => {
                         <p>Starting At</p>
                         <p>{pkg.price}</p>
                       </div>
-                      <Link to="/contact" className="pkg-btn" style={{ textDecoration: 'none', textAlign: 'center' }}>Book Now</Link>
+                      <button className="pkg-btn" onClick={() => openBooking(pkg)} style={{ border: 'none', cursor: 'pointer' }}>Book Now</button>
                     </div>
                   </div>
                 </div>
@@ -92,6 +101,12 @@ const Packages = () => {
         </section>
       </div>
       <Footer />
+      <BookingModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        destinationName={selectedPkg?.name}
+        packagePrice={selectedPkg?.price}
+      />
     </div>
   );
 };
