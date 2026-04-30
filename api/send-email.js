@@ -11,12 +11,15 @@ const OWNER_EMAIL = process.env.OWNER_EMAIL || 'sheratravels21@gmail.com'
 function createTransporter() {
   const isGmail = FROM_EMAIL.endsWith('@gmail.com')
   if (isGmail) {
+    // Explicit Gmail SMTP — more reliable than service:'gmail' on serverless
     return nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: { user: FROM_EMAIL, pass: EMAIL_PASS },
+      tls: { rejectUnauthorized: false },
     })
   }
-  // Hostinger / custom domain fallback
   return nodemailer.createTransport({
     host: 'smtp.hostinger.com',
     port: 465,
@@ -287,8 +290,10 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  if (!FROM_EMAIL || !EMAIL_PASS) {
-    return res.status(500).json({ error: 'Email credentials not configured. Set EMAIL_USER and EMAIL_PASS in Vercel env vars.' })
+  console.log('[send-email] FROM_EMAIL:', FROM_EMAIL, '| EMAIL_PASS set:', !!EMAIL_PASS, '| ADMIN:', ADMIN_EMAIL)
+
+  if (!EMAIL_PASS) {
+    return res.status(500).json({ error: 'EMAIL_PASS not set in Vercel env vars.' })
   }
 
   const { type, booking, payment, justPaid, newPaidTotal, newBalance } = req.body
