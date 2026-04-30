@@ -5,8 +5,8 @@ const SMTP_HOST = 'smtp.hostinger.com'
 const SMTP_PORT = 465
 const FROM_EMAIL = process.env.EMAIL_USER   // e.g. bookings@sheratravels.com
 const EMAIL_PASS = process.env.EMAIL_PASS
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || process.env.EMAIL_USER  // employee email
-const OWNER_EMAIL = process.env.OWNER_EMAIL || process.env.EMAIL_USER  // owner email
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'sheratravels21@gmail.com'
+const OWNER_EMAIL = process.env.OWNER_EMAIL || process.env.EMAIL_USER || 'sheratravels21@gmail.com'
 
 function createTransporter() {
   return nodemailer.createTransport({
