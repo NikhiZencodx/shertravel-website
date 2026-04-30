@@ -1,18 +1,26 @@
 import nodemailer from 'nodemailer'
 
-// Hostinger SMTP config (set in Vercel → Project → Settings → Environment Variables)
-const SMTP_HOST = 'smtp.hostinger.com'
-const SMTP_PORT = 465
-const FROM_EMAIL = process.env.EMAIL_USER   // e.g. bookings@sheratravels.com
-const EMAIL_PASS = process.env.EMAIL_PASS
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'sheratravels21@gmail.com'
-const OWNER_EMAIL = process.env.OWNER_EMAIL || process.env.EMAIL_USER || 'sheratravels21@gmail.com'
+// EMAIL_USER  = sheratravels21@gmail.com
+// EMAIL_PASS  = Gmail App Password (16-char, no spaces)
+//               Google Account → Security → 2-Step Verification → App passwords
+const FROM_EMAIL  = process.env.EMAIL_USER  || 'sheratravels21@gmail.com'
+const EMAIL_PASS  = process.env.EMAIL_PASS
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'sheratravels21@gmail.com'
+const OWNER_EMAIL = process.env.OWNER_EMAIL || 'sheratravels21@gmail.com'
 
 function createTransporter() {
+  const isGmail = FROM_EMAIL.endsWith('@gmail.com')
+  if (isGmail) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: FROM_EMAIL, pass: EMAIL_PASS },
+    })
+  }
+  // Hostinger / custom domain fallback
   return nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure: true, // SSL on port 465
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true,
     auth: { user: FROM_EMAIL, pass: EMAIL_PASS },
   })
 }
