@@ -70,6 +70,33 @@ const BookingModal = ({ isOpen, onClose, destinationName, packagePrice }) => {
         setPaymentRef(response.razorpay_payment_id);
         setStep('success');
         setPaying(false);
+        // Notify admin of website booking + payment
+        fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'website_booking',
+            booking: {
+              customer_name:  formData.name,
+              customer_email: formData.email,
+              customer_phone: formData.phone,
+              destination:    destinationName || 'Kashmir Tour',
+              travel_date:    formData.date,
+              adults:         formData.guests,
+              total_amount:   priceNum || 0,
+              paid_amount:    advanceAmt,
+              booking_ref:    response.razorpay_payment_id,
+            },
+            payment: {
+              amount:               advanceAmt,
+              method:               'razorpay',
+              razorpay_payment_id:  response.razorpay_payment_id,
+            },
+            justPaid:     advanceAmt,
+            newPaidTotal: advanceAmt,
+            newBalance:   Math.max(0, priceNum - advanceAmt),
+          }),
+        }).catch(() => {});
       },
     };
 

@@ -1,17 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const formRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate API call
-    console.log('Contact form submitted');
+    const fd = new FormData(e.target);
+    const data = {
+      name:    fd.get('name')    || e.target.querySelector('[placeholder="John Doe"]')?.value || '',
+      email:   fd.get('email')   || e.target.querySelector('[type="email"]')?.value || '',
+      phone:   fd.get('phone')   || e.target.querySelector('[type="tel"]')?.value || '',
+      subject: fd.get('subject') || e.target.querySelector('select')?.value || '',
+      message: fd.get('message') || e.target.querySelector('textarea')?.value || '',
+    };
+
+    setSending(true);
+    try {
+      await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'contact', contact: data }),
+      });
+    } catch (_) {}
+    setSending(false);
     setIsSubmitted(true);
-    // Optionally redirect after some time
-    // setTimeout(() => window.location.href = '/', 5000);
   };
 
   return (
@@ -47,20 +63,20 @@ const Contact = () => {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }} className="form-row-mobile">
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <label style={{ fontSize: '13px', fontWeight: '600' }}>Full Name</label>
-                      <input type="text" placeholder="John Doe" required />
+                      <input type="text" name="name" placeholder="John Doe" required />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <label style={{ fontSize: '13px', fontWeight: '600' }}>Email Address</label>
-                      <input type="email" placeholder="john@example.com" required />
+                      <input type="email" name="email" placeholder="john@example.com" required />
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '13px', fontWeight: '600' }}>Phone Number</label>
-                    <input type="tel" placeholder="+91 7006XXXXXX" required />
+                    <input type="tel" name="phone" placeholder="+91 7006XXXXXX" required />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '13px', fontWeight: '600' }}>Subject</label>
-                    <select required>
+                    <select name="subject" required>
                       <option value="">Select a subject</option>
                       <option>Booking Inquiry</option>
                       <option>Custom Package</option>
@@ -70,9 +86,11 @@ const Contact = () => {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '13px', fontWeight: '600' }}>Your Message</label>
-                    <textarea placeholder="Tell us about your dream trip..." rows="5" required></textarea>
+                    <textarea name="message" placeholder="Tell us about your dream trip..." rows="5" required></textarea>
                   </div>
-                  <button type="submit" className="nav-btn" style={{ background: 'var(--dark)', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: '700', marginTop: '10px', cursor: 'pointer' }}>Send Message</button>
+                  <button type="submit" className="nav-btn" disabled={sending} style={{ background: 'var(--dark)', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: '700', marginTop: '10px', cursor: 'pointer' }}>
+                    {sending ? 'Sending...' : 'Send Message'}
+                  </button>
                 </form>
               )}
             </div>
