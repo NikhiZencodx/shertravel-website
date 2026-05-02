@@ -7,6 +7,9 @@ const Contact = () => {
   const [sending, setSending]         = useState(false);
   const [sendError, setSendError]     = useState('');
 
+  const SUPABASE_URL     = 'https://puufrlhhdjsqnbseayvh.supabase.co'
+  const SUPABASE_ANON    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1dWZybGhoZGpzcW5ic2VheXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNzIxNzMsImV4cCI6MjA5MTg0ODE3M30.yByTKkvnlWV5MNAT8Coo2PUKhBOeQWxgtIFdSsd3hbg'
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
@@ -21,15 +24,47 @@ const Contact = () => {
     setSending(true);
     setSendError('');
     try {
-      const res = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'contact', contact: data }),
+      // Save to Supabase leads table — shows up instantly in CRM
+      const digits = (data.phone || '').replace(/\D/g, '')
+      const phone  = digits.length === 10 ? '91' + digits : digits
+
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':        SUPABASE_ANON,
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+          'Prefer':        'return=minimal',
+        },
+        body: JSON.stringify({
+          id:          crypto.randomUUID(),
+          name:        data.name,
+          email:       data.email || null,
+          phone:       phone || null,
+          whatsapp:    phone || null,
+          destination: data.subject || 'Website Enquiry',
+          notes:       `Website Contact Form\n\nMessage: ${data.message}`,
+          stage:       'new_inquiry',
+          adults:      1,
+          children:    0,
+          infants:     0,
+          created_at:  new Date().toISOString(),
+          updated_at:  new Date().toISOString(),
+        }),
       });
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `Server error ${res.status}`);
+        throw new Error(err.message || `Save failed (${res.status})`);
       }
+
+      // Also fire email notification — silent if it fails
+      fetch('/api/send-email', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ type: 'contact', contact: data }),
+      }).catch(() => {});
+
       setIsSubmitted(true);
     } catch (err) {
       setSendError(err.message || 'Something went wrong. Please try again.');
