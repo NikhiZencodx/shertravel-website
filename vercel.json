@@ -2,6 +2,6 @@
   "rewrites": [
     { "source": "/crm", "destination": "/crm/index.html" },
     { "source": "/crm/:path*", "destination": "/crm/index.html" },
-    { "source": "/:path*", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
