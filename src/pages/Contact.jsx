@@ -1,33 +1,41 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [sending, setSending] = useState(false);
-  const formRef = useRef(null);
+  const [sending, setSending]         = useState(false);
+  const [sendError, setSendError]     = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const data = {
-      name:    fd.get('name')    || e.target.querySelector('[placeholder="John Doe"]')?.value || '',
-      email:   fd.get('email')   || e.target.querySelector('[type="email"]')?.value || '',
-      phone:   fd.get('phone')   || e.target.querySelector('[type="tel"]')?.value || '',
-      subject: fd.get('subject') || e.target.querySelector('select')?.value || '',
-      message: fd.get('message') || e.target.querySelector('textarea')?.value || '',
+      name:    fd.get('name')    || '',
+      email:   fd.get('email')   || '',
+      phone:   fd.get('phone')   || '',
+      subject: fd.get('subject') || '',
+      message: fd.get('message') || '',
     };
 
     setSending(true);
+    setSendError('');
     try {
-      await fetch('/api/send-email', {
+      const res = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'contact', contact: data }),
       });
-    } catch (_) {}
-    setSending(false);
-    setIsSubmitted(true);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Server error ${res.status}`);
+      }
+      setIsSubmitted(true);
+    } catch (err) {
+      setSendError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -88,9 +96,14 @@ const Contact = () => {
                     <label style={{ fontSize: '13px', fontWeight: '600' }}>Your Message</label>
                     <textarea name="message" placeholder="Tell us about your dream trip..." rows="5" required></textarea>
                   </div>
-                  <button type="submit" className="nav-btn" disabled={sending} style={{ background: 'var(--dark)', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: '700', marginTop: '10px', cursor: 'pointer' }}>
+                  <button type="submit" className="nav-btn" disabled={sending} style={{ background: 'var(--dark)', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: '700', marginTop: '10px', cursor: sending ? 'not-allowed' : 'pointer' }}>
                     {sending ? 'Sending...' : 'Send Message'}
                   </button>
+                  {sendError && (
+                    <p style={{ color: '#ef4444', fontSize: '13px', marginTop: '10px', padding: '10px 14px', background: '#fef2f2', borderRadius: '8px', border: '1px solid #fecaca' }}>
+                      ⚠️ {sendError}
+                    </p>
+                  )}
                 </form>
               )}
             </div>
