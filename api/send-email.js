@@ -343,8 +343,11 @@ export default async function handler(req, res) {
 
   const { type, booking, payment, justPaid, newPaidTotal, newBalance, contact } = req.body
 
+  // ── website_booking → treat same as new_booking ──────────
+  const resolvedType = type === 'website_booking' ? 'new_booking' : type
+
   // ── Contact form ─────────────────────────────────────────
-  if (type === 'contact') {
+  if (resolvedType === 'contact') {
     if (!contact) return res.status(400).json({ error: 'contact data required' })
     try {
       await sendViaResend({
@@ -367,7 +370,7 @@ export default async function handler(req, res) {
     // ── 1. Customer email ────────────────────────────────────
     if (booking.customer_email) {
       let subject, html
-      if (type === 'new_booking') {
+      if (resolvedType === 'new_booking') {
         subject = `✈️ Booking Confirmed — ${booking.booking_ref} | Shera Travels`
         html    = bookingConfirmationHTML({ booking })
       } else if (justPaid != null) {
@@ -382,26 +385,26 @@ export default async function handler(req, res) {
 
     // ── 2. Admin notification ────────────────────────────────
     if (ADMIN_EMAIL) {
-      const subject = type === 'new_booking'
+      const subject = resolvedType === 'new_booking'
         ? `📋 New Booking — ${booking.booking_ref} | ${booking.customer_name}`
         : `💰 Payment Received — ${booking.booking_ref} | ${fmt(payment?.amount || justPaid)} | ${booking.customer_name}`
       await sendViaResend({
         to:      ADMIN_EMAIL,
         subject,
-        html:    adminNotificationHTML({ type: type || 'payment', booking, payment: payment || { amount: justPaid } }),
+        html:    adminNotificationHTML({ type: resolvedType || 'payment', booking, payment: payment || { amount: justPaid } }),
       })
       sent.push(`admin: ${ADMIN_EMAIL}`)
     }
 
     // ── 3. Owner (if different from admin) ───────────────────
     if (OWNER_EMAIL && OWNER_EMAIL !== ADMIN_EMAIL) {
-      const subject = type === 'new_booking'
+      const subject = resolvedType === 'new_booking'
         ? `📋 New Booking — ${booking.booking_ref} | ${booking.customer_name}`
         : `💰 Payment — ${booking.booking_ref} | ${fmt(payment?.amount || justPaid)}`
       await sendViaResend({
         to:      OWNER_EMAIL,
         subject,
-        html:    adminNotificationHTML({ type: type || 'payment', booking, payment: payment || { amount: justPaid } }),
+        html:    adminNotificationHTML({ type: resolvedType || 'payment', booking, payment: payment || { amount: justPaid } }),
       })
       sent.push(`owner: ${OWNER_EMAIL}`)
     }
