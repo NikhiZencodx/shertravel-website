@@ -283,6 +283,53 @@ function customerReceiptHTML({ booking, justPaid, newPaidTotal, newBalance }) {
 </body></html>`
 }
 
+// ── New Lead / Booking Inquiry HTML (from Packages page "Book Now") ─
+function newLeadHTML({ contact }) {
+  const now = new Date().toLocaleString('en-IN', { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' })
+  return `
+<!DOCTYPE html><html>
+<head><meta charset="UTF-8"/>
+<style>
+  body{font-family:Inter,Arial,sans-serif;background:#F1F5F9;margin:0;padding:20px;color:#0F172A}
+  .wrap{max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+  .header{background:linear-gradient(135deg,#F59E0B,#EF4444);padding:28px 32px;color:#fff}
+  .header h1{margin:0 0 4px;font-size:22px;font-weight:900}
+  .header p{margin:0;opacity:.85;font-size:13px}
+  .section{padding:20px 32px;border-bottom:1px solid #E2E8F0}
+  .section:last-of-type{border-bottom:none}
+  .sec-title{font-size:10px;font-weight:800;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+  .row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px}
+  .label{color:#64748B}.val{font-weight:700;color:#0F172A}
+  .highlight{background:#FEF3C7;border-radius:10px;padding:14px 20px;margin-top:8px;border-left:4px solid #F59E0B}
+  .crm-btn{display:block;background:#4F6EF7;color:#fff;text-decoration:none;text-align:center;padding:14px 24px;font-weight:800;font-size:14px;margin:20px 32px;border-radius:12px}
+  .footer{background:#F8FAFC;padding:16px 32px;text-align:center;font-size:11px;color:#94A3B8}
+</style>
+</head>
+<body><div class="wrap">
+  <div class="header">
+    <h1>🔥 New Booking Inquiry!</h1>
+    <p>${now}</p>
+  </div>
+  <div class="section">
+    <div class="highlight">
+      <strong style="font-size:15px">📦 ${contact.package || 'Kashmir Tour'}</strong>
+      ${contact.price ? `<div style="font-size:13px;color:#92400E;margin-top:4px">💰 Price: ${contact.price}</div>` : ''}
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-title">Customer Details</div>
+    <div class="row"><span class="label">Name</span><span class="val">${contact.name || '—'}</span></div>
+    <div class="row"><span class="label">Email</span><span class="val">${contact.email || '—'}</span></div>
+    <div class="row"><span class="label">Phone</span><span class="val">${contact.phone || '—'}</span></div>
+    <div class="row"><span class="label">Travel Date</span><span class="val">${contact.travel_date || '—'}</span></div>
+    <div class="row"><span class="label">Guests</span><span class="val">${contact.guests || '—'}</span></div>
+    ${contact.message ? `<div class="row"><span class="label">Message</span><span class="val">${contact.message}</span></div>` : ''}
+  </div>
+  <a href="https://sheratravelsxr.com/crm/leads" class="crm-btn">Open CRM → Add as Lead</a>
+  <div class="footer">Shera Travels Website • Booking Inquiry Alert</div>
+</div></body></html>`
+}
+
 // ── Contact Form Notification HTML ───────────────────────────
 function contactFormHTML({ contact }) {
   const now = new Date().toLocaleString('en-IN', { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' })
@@ -345,6 +392,22 @@ export default async function handler(req, res) {
 
   // ── website_booking → treat same as new_booking ──────────
   const resolvedType = type === 'website_booking' ? 'new_booking' : type
+
+  // ── New Lead (Packages page "Book Now" form) ─────────────
+  if (type === 'new_lead') {
+    if (!contact) return res.status(400).json({ error: 'contact data required' })
+    try {
+      await sendViaResend({
+        to:      ADMIN_EMAIL,
+        subject: `🔥 New Inquiry — ${contact.package || 'Kashmir Tour'} | ${contact.name} | ${contact.phone}`,
+        html:    newLeadHTML({ contact }),
+      })
+      return res.status(200).json({ success: true, sent: [`admin: ${ADMIN_EMAIL}`] })
+    } catch (err) {
+      console.error('Lead email error:', err)
+      return res.status(500).json({ error: err.message })
+    }
+  }
 
   // ── Contact form ─────────────────────────────────────────
   if (resolvedType === 'contact') {

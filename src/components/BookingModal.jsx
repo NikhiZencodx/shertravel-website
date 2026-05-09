@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const RAZORPAY_KEY = 'rzp_live_SitNu7A5ZfFLnZ';
+const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_SnKkk6ok7WL22P';
 
 function loadRazorpayScript() {
   return new Promise((resolve) => {
@@ -34,6 +34,25 @@ const BookingModal = ({ isOpen, onClose, destinationName, packagePrice }) => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setStep('payment');
+    // Fire-and-forget lead notification to admin
+    fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'new_lead',
+        contact: {
+          name:        formData.name,
+          email:       formData.email,
+          phone:       formData.phone,
+          travel_date: formData.date,
+          guests:      formData.guests,
+          message:     formData.message || '',
+          subject:     `New Inquiry — ${destinationName || 'Kashmir Tour'}`,
+          package:     destinationName || 'Kashmir Tour',
+          price:       packagePrice || '',
+        },
+      }),
+    }).catch(() => {});
   };
 
   const handlePayNow = async () => {
