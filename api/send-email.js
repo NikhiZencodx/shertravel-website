@@ -409,6 +409,22 @@ export default async function handler(req, res) {
     }
   }
 
+  // ── Itinerary email (customer + admin) ───────────────────
+  if (type === 'itinerary') {
+    if (!booking?.customer_email) return res.status(400).json({ error: 'customer_email required' })
+    const { pkg = {}, days = [], prices = [] } = req.body
+    try {
+      await sendViaResend({
+        to:      booking.customer_email,
+        subject: `Your Personalised Itinerary — ${booking.destination || 'Kashmir'} | Shera Travels`,
+        html:    itineraryHTML(booking, pkg, days, prices),
+      })
+      return res.status(200).json({ success: true, sent: [`customer: ${booking.customer_email}`] })
+    } catch (err) {
+      return res.status(500).json({ error: err.message })
+    }
+  }
+
   // ── Contact form ─────────────────────────────────────────
   if (resolvedType === 'contact') {
     if (!contact) return res.status(400).json({ error: 'contact data required' })
