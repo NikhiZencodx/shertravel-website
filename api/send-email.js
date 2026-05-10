@@ -4,7 +4,7 @@
 // Free tier sender: "Shera Travels <onboarding@resend.dev>"  (works without domain verification)
 // To send from sheratravels21@gmail.com or info@sheratravelsxr.com → verify domain in Resend dashboard
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY
+const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_KRBJ2MB9_2v4u5Sgan5EdNUQjhGV6Cqhb'
 const ADMIN_EMAIL    = process.env.ADMIN_EMAIL || 'sheratravels21@gmail.com'
 const OWNER_EMAIL    = process.env.OWNER_EMAIL || 'sheratravels21@gmail.com'
 const FROM_EMAIL     = process.env.FROM_EMAIL  || 'onboarding@resend.dev'
