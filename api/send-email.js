@@ -144,12 +144,22 @@ function adminNotificationHTML({ type, booking, payment }) {
 }
 
 // ── Invoice HTML (customer-facing full invoice) ──────────────
-function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0 }) {
+function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0, pkg = null, days = [] }) {
   const fmt   = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`
   const fmtDt = (d) => d ? new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '—'
   const invoiceNo = `INV-${(booking?.booking_ref || 'ST').replace('ST-','')}-${new Date().getFullYear()}`
   const issueDate = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' })
   const fullyPaid = balance <= 0
+
+  const dayRows = days.map((d, i) => `
+    <div style="margin-bottom:14px;padding:14px 16px;background:#F8FAFC;border-radius:10px;border-left:4px solid #4F6EF7;">
+      <div style="font-size:13px;font-weight:800;color:#4F6EF7;margin-bottom:5px;">Day ${i+1}${d.title ? ': ' + d.title.replace(/^Day \d+[:\-\s]*/i,'') : ''}</div>
+      ${d.description ? `<div style="font-size:12px;color:#475569;line-height:1.6;">${d.description}</div>` : ''}
+      <div style="font-size:11px;color:#94A3B8;margin-top:6px;">
+        ${d.accommodation ? `🏨 ${d.accommodation} &nbsp;` : ''}
+        ${(d.meals||[]).length ? `🍽 ${d.meals.join(' · ')}` : ''}
+      </div>
+    </div>`).join('')
 
   const payRows = payments.map((p, i) => `
     <tr style="border-bottom:1px solid #F1F5F9;">
@@ -273,6 +283,15 @@ function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0 }) {
         </tr>
         ${payRows}
       </table>
+    </td>
+  </tr>` : ''}
+
+  ${days.length > 0 ? `
+  <!-- ITINERARY -->
+  <tr>
+    <td style="padding:0 40px 28px;">
+      <div style="font-size:11px;font-weight:800;color:#6366F1;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">DAY-WISE ITINERARY${pkg ? ` — ${pkg.title}` : ''}</div>
+      ${dayRows}
     </td>
   </tr>` : ''}
 
@@ -689,10 +708,10 @@ export default async function handler(req, res) {
 
   // ── Invoice email (customer + admin) ────────────────────
   if (type === 'invoice') {
-    const { payments: pmts = [] } = req.body
+    const { payments: pmts = [], pkg = null, days = [] } = req.body
     const paidTotal = pmts.reduce((s, p) => s + Number(p.amount || 0), 0)
     const balance   = Math.max(0, Number(booking?.total_amount || 0) - paidTotal)
-    const html = invoiceHTML({ booking, payments: pmts, paidTotal, balance })
+    const html = invoiceHTML({ booking, payments: pmts, paidTotal, balance, pkg, days })
     const sent = []
     if (booking?.customer_email) {
       try {
