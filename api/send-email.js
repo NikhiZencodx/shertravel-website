@@ -143,6 +143,62 @@ function adminNotificationHTML({ type, booking, payment }) {
 </body></html>`
 }
 
+// ── Invoice HTML (customer-facing full invoice) ──────────────
+function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0 }) {
+  const fmt = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`
+  const payRows = payments.map(p => `
+    <tr>
+      <td style="padding:8px 12px;font-size:13px;color:#334155">${p.paid_at ? new Date(p.paid_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</td>
+      <td style="padding:8px 12px;font-size:13px;font-weight:700;color:#059669">${fmt(p.amount)}</td>
+      <td style="padding:8px 12px;font-size:13px;text-transform:capitalize;color:#334155">${p.method || 'razorpay'}</td>
+    </tr>`).join('')
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+  <style>
+    body{font-family:Inter,Arial,sans-serif;background:#F1F5F9;margin:0;padding:20px;color:#0F172A}
+    .wrap{max-width:620px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+    .header{background:linear-gradient(135deg,#4F6EF7,#6366F1);padding:32px;color:#fff}
+    .header h1{margin:0 0 4px;font-size:22px;font-weight:900}
+    .header p{margin:0;opacity:.85;font-size:14px}
+    .section{padding:24px 32px;border-bottom:1px solid #E2E8F0}
+    .section:last-child{border-bottom:none}
+    .section-title{font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+    .row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px}
+    .row .label{color:#64748B}.row .value{font-weight:700}
+    .total-box{background:#F8FAFC;border-radius:12px;padding:16px 20px;margin-top:8px}
+    .total-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #E2E8F0;font-size:14px}
+    .total-row:last-child{border-bottom:none;padding-top:10px;font-size:16px;font-weight:900;color:#4F6EF7}
+    .footer{background:#F8FAFC;padding:20px 32px;text-align:center;font-size:12px;color:#94A3B8}
+    table{width:100%;border-collapse:collapse}thead th{padding:8px 12px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;text-align:left;background:#F8FAFC;border-bottom:1px solid #E2E8F0}
+  </style></head><body>
+  <div class="wrap">
+    <div class="header">
+      <h1>🧾 Invoice</h1>
+      <p>Ref: <strong>${booking?.booking_ref || '—'}</strong> &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</p>
+    </div>
+    <div class="section">
+      <div class="section-title">Customer</div>
+      <div class="row"><span class="label">Name</span><span class="value">${booking?.customer_name || '—'}</span></div>
+      <div class="row"><span class="label">Phone</span><span class="value">${booking?.customer_phone || '—'}</span></div>
+      <div class="row"><span class="label">Destination</span><span class="value">${booking?.destination || '—'}</span></div>
+      <div class="row"><span class="label">Travel Date</span><span class="value">${booking?.travel_date ? new Date(booking.travel_date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—'}</span></div>
+    </div>
+    ${payments.length > 0 ? `<div class="section">
+      <div class="section-title">Payment History</div>
+      <table><thead><tr><th>Date</th><th>Amount</th><th>Method</th></tr></thead>
+      <tbody>${payRows}</tbody></table>
+    </div>` : ''}
+    <div class="section">
+      <div class="section-title">Summary</div>
+      <div class="total-box">
+        <div class="total-row"><span>Total Package</span><span>${fmt(booking?.total_amount)}</span></div>
+        <div class="total-row"><span>Total Paid</span><span style="color:#059669">${fmt(paidTotal)}</span></div>
+        <div class="total-row"><span>Balance Due</span><span style="color:${balance > 0 ? '#F59E0B' : '#059669'}">${fmt(balance)}</span></div>
+      </div>
+    </div>
+    <div class="footer"><strong>Shera Travels</strong><br/>📞 +91-9149406965 &nbsp;|&nbsp; ✉ sheratravels21@gmail.com</div>
+  </div></body></html>`
+}
+
 // ── New Booking Confirmation HTML (customer-facing) ──────────
 function bookingConfirmationHTML({ booking }) {
   const advance = Number(booking.advance_amount || 0)
@@ -493,6 +549,39 @@ export default async function handler(req, res) {
       sent.push(`admin: ${ADMIN_EMAIL}`)
     } catch (err) {
       console.warn('Itinerary admin copy failed:', err.message)
+    }
+    return res.status(200).json({ success: true, sent })
+  }
+
+  // ── Invoice email (customer + admin) ────────────────────
+  if (type === 'invoice') {
+    const { payments: pmts = [] } = req.body
+    const paidTotal = pmts.reduce((s, p) => s + Number(p.amount || 0), 0)
+    const balance   = Math.max(0, Number(booking?.total_amount || 0) - paidTotal)
+    const html = invoiceHTML({ booking, payments: pmts, paidTotal, balance })
+    const sent = []
+    if (booking?.customer_email) {
+      try {
+        await sendViaResend({
+          to:      booking.customer_email,
+          subject: `🧾 Invoice — ${booking.booking_ref || 'Booking'} | Shera Travels`,
+          html,
+        })
+        sent.push(`customer: ${booking.customer_email}`)
+      } catch (err) {
+        console.warn('Invoice customer email failed:', err.message)
+        sent.push(`customer_failed: ${err.message}`)
+      }
+    }
+    try {
+      await sendViaResend({
+        to:      ADMIN_EMAIL,
+        subject: `🧾 Invoice Sent — ${booking?.booking_ref || ''} | ${booking?.customer_name}`,
+        html,
+      })
+      sent.push(`admin: ${ADMIN_EMAIL}`)
+    } catch (err) {
+      console.warn('Invoice admin copy failed:', err.message)
     }
     return res.status(200).json({ success: true, sent })
   }
