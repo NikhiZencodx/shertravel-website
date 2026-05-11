@@ -144,22 +144,14 @@ function adminNotificationHTML({ type, booking, payment }) {
 }
 
 // ── Invoice HTML (customer-facing full invoice) ──────────────
-function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0, pkg = null, days = [] }) {
+function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0, pkg = null }) {
   const fmt   = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`
   const fmtDt = (d) => d ? new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '—'
   const invoiceNo = `INV-${(booking?.booking_ref || 'ST').replace('ST-','')}-${new Date().getFullYear()}`
   const issueDate = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' })
   const fullyPaid = balance <= 0
-
-  const dayRows = days.map((d, i) => `
-    <div style="margin-bottom:14px;padding:14px 16px;background:#F8FAFC;border-radius:10px;border-left:4px solid #4F6EF7;">
-      <div style="font-size:13px;font-weight:800;color:#4F6EF7;margin-bottom:5px;">Day ${i+1}${d.title ? ': ' + d.title.replace(/^Day \d+[:\-\s]*/i,'') : ''}</div>
-      ${d.description ? `<div style="font-size:12px;color:#475569;line-height:1.6;">${d.description}</div>` : ''}
-      <div style="font-size:11px;color:#94A3B8;margin-top:6px;">
-        ${d.accommodation ? `🏨 ${d.accommodation} &nbsp;` : ''}
-        ${(d.meals||[]).length ? `🍽 ${d.meals.join(' · ')}` : ''}
-      </div>
-    </div>`).join('')
+  const pkgName   = pkg?.title || (booking?.destination ? `${booking.destination} Tour Package` : 'Kashmir Tour Package')
+  const pkgMeta   = [pkg?.nights ? `${pkg.nights}N/${Number(pkg.nights)+1}D` : null, booking?.booking_ref].filter(Boolean).join(' · ')
 
   const payRows = payments.map((p, i) => `
     <tr style="border-bottom:1px solid #F1F5F9;">
@@ -192,8 +184,8 @@ function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0, pkg =
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td>
-            <div style="font-size:26px;font-weight:900;color:#1E293B;letter-spacing:-0.5px;">Shera Travels</div>
-            <div style="font-size:13px;color:#64748B;margin-top:4px;">Kashmir Tourism · Budgam, J&K, India</div>
+            <img src="https://www.sheratravelsxr.com/crm/logo.png" alt="Shera Travels" style="height:60px;width:auto;display:block;margin-bottom:8px;" />
+            <div style="font-size:13px;color:#64748B;margin-top:2px;">Kashmir Tourism · Budgam, J&K, India</div>
             <div style="font-size:13px;color:#64748B;">📞 +91-9149406965 &nbsp;·&nbsp; sheratravels21@gmail.com</div>
           </td>
           <td align="right" valign="top">
@@ -259,8 +251,8 @@ function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0, pkg =
         </tr>
         <tr>
           <td style="padding:16px;font-size:14px;color:#334155;">
-            <div style="font-weight:700;color:#1E293B;">${booking?.destination || 'Kashmir'} Tour Package</div>
-            <div style="font-size:12px;color:#94A3B8;margin-top:3px;">Booking Ref: ${booking?.booking_ref || '—'} &nbsp;·&nbsp; ${booking?.nights || ''}N/${(booking?.nights ? Number(booking.nights)+1 : '')}D</div>
+            <div style="font-weight:700;color:#1E293B;">${pkgName}</div>
+            <div style="font-size:12px;color:#94A3B8;margin-top:3px;">${pkgMeta}</div>
           </td>
           <td style="padding:16px;font-size:15px;font-weight:800;color:#1E293B;text-align:right;">${fmt(booking?.total_amount)}</td>
         </tr>
@@ -283,15 +275,6 @@ function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0, pkg =
         </tr>
         ${payRows}
       </table>
-    </td>
-  </tr>` : ''}
-
-  ${days.length > 0 ? `
-  <!-- ITINERARY -->
-  <tr>
-    <td style="padding:0 40px 28px;">
-      <div style="font-size:11px;font-weight:800;color:#6366F1;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">DAY-WISE ITINERARY${pkg ? ` — ${pkg.title}` : ''}</div>
-      ${dayRows}
     </td>
   </tr>` : ''}
 
@@ -708,10 +691,10 @@ export default async function handler(req, res) {
 
   // ── Invoice email (customer + admin) ────────────────────
   if (type === 'invoice') {
-    const { payments: pmts = [], pkg = null, days = [] } = req.body
+    const { payments: pmts = [], pkg = null } = req.body
     const paidTotal = pmts.reduce((s, p) => s + Number(p.amount || 0), 0)
     const balance   = Math.max(0, Number(booking?.total_amount || 0) - paidTotal)
-    const html = invoiceHTML({ booking, payments: pmts, paidTotal, balance, pkg, days })
+    const html = invoiceHTML({ booking, payments: pmts, paidTotal, balance, pkg })
     const sent = []
     if (booking?.customer_email) {
       try {
