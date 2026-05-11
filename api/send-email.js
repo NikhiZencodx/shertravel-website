@@ -4,12 +4,30 @@
 // Free tier sender: "Shera Travels <onboarding@resend.dev>"  (works without domain verification)
 // To send from sheratravels21@gmail.com or info@sheratravelsxr.com → verify domain in Resend dashboard
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_KRBJ2MB9_2v4u5Sgan5EdNUQjhGV6Cqhb'
-const ADMIN_EMAIL    = process.env.ADMIN_EMAIL || 'sheratravels21@gmail.com'
-const OWNER_EMAIL    = process.env.OWNER_EMAIL || 'sheratravels21@gmail.com'
-const FROM_EMAIL     = process.env.FROM_EMAIL  || 'onboarding@resend.dev'
-const FROM_NAME      = 'Shera Travels'
-const REPLY_TO       = 'sheratravels21@gmail.com'
+const RESEND_API_KEY  = process.env.RESEND_API_KEY || 're_KRBJ2MB9_2v4u5Sgan5EdNUQjhGV6Cqhb'
+const ADMIN_EMAIL     = process.env.ADMIN_EMAIL || 'sheratravels21@gmail.com'
+const OWNER_EMAIL     = process.env.OWNER_EMAIL || 'sheratravels21@gmail.com'
+const FROM_EMAIL      = process.env.FROM_EMAIL  || 'onboarding@resend.dev'
+const FROM_NAME       = 'Shera Travels'
+const REPLY_TO        = 'sheratravels21@gmail.com'
+const SUPABASE_URL    = process.env.SUPABASE_URL || 'https://puufrlhhdjsqnbseayvh.supabase.co'
+const SUPABASE_ANON   = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1dWZybGhoZGpzcW5ic2VheXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNzIxNzMsImV4cCI6MjA5MTg0ODE3M30.yByTKkvnlWV5MNAT8Coo2PUKhBOeQWxgtIFdSsd3hbg'
+
+async function supabaseInsert(table, row) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON,
+      'Authorization': `Bearer ${SUPABASE_ANON}`,
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(row),
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data?.message || JSON.stringify(data))
+  return Array.isArray(data) ? data[0] : data
+}
 
 const fmt = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`
 
@@ -390,7 +408,49 @@ export default async function handler(req, res) {
 
   const { type, booking, payment, justPaid, newPaidTotal, newBalance, contact } = req.body
 
-  // ── website_booking → treat same as new_booking ──────────
+  // ── Website booking (Razorpay success on public site) ────
+  // Save to Supabase so CRM shows it automatically
+  if (type === 'website_booking' && booking) {
+    try {
+      const year = new Date().getFullYear()
+      const rand = Math.floor(1000 + Math.random() * 9000)
+      const bookingRef = `ST-${year}-W${rand}`
+
+      const advAmt = Number(booking.paid_amount || 0)
+      const totalAmt = Number(booking.total_amount || 0)
+
+      const newBooking = await supabaseInsert('bookings', {
+        booking_ref:      bookingRef,
+        customer_name:    booking.customer_name,
+        customer_email:   booking.customer_email || '',
+        customer_phone:   booking.customer_phone || '',
+        destination:      booking.destination || 'Kashmir',
+        travel_date:      booking.travel_date || null,
+        adults:           Number(booking.adults || 1),
+        total_amount:     totalAmt,
+        advance_amount:   advAmt,
+        paid_amount:      advAmt,
+        status:           advAmt >= totalAmt ? 'fully_paid' : 'advance_paid',
+        notes:            `Online booking via website. Razorpay ID: ${booking.booking_ref || payment?.razorpay_payment_id || ''}`,
+      })
+
+      if (newBooking?.id) {
+        await supabaseInsert('payments', {
+          booking_id:          newBooking.id,
+          amount:              advAmt,
+          type:                'advance',
+          method:              'razorpay',
+          razorpay_payment_id: booking.booking_ref || payment?.razorpay_payment_id || null,
+          status:              'success',
+          notes:               'Online payment via website',
+        }).catch(e => console.warn('Payment insert failed:', e.message))
+      }
+    } catch (e) {
+      console.warn('Supabase website_booking save failed:', e.message)
+    }
+  }
+
+  // ── website_booking → treat same as new_booking for email ─
   const resolvedType = type === 'website_booking' ? 'new_booking' : type
 
   // ── New Lead (Packages page "Book Now" form) ─────────────
