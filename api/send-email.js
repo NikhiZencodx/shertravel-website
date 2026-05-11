@@ -145,58 +145,192 @@ function adminNotificationHTML({ type, booking, payment }) {
 
 // ── Invoice HTML (customer-facing full invoice) ──────────────
 function invoiceHTML({ booking, payments = [], paidTotal = 0, balance = 0 }) {
-  const fmt = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`
-  const payRows = payments.map(p => `
-    <tr>
-      <td style="padding:8px 12px;font-size:13px;color:#334155">${p.paid_at ? new Date(p.paid_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</td>
-      <td style="padding:8px 12px;font-size:13px;font-weight:700;color:#059669">${fmt(p.amount)}</td>
-      <td style="padding:8px 12px;font-size:13px;text-transform:capitalize;color:#334155">${p.method || 'razorpay'}</td>
+  const fmt   = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`
+  const fmtDt = (d) => d ? new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '—'
+  const invoiceNo = `INV-${(booking?.booking_ref || 'ST').replace('ST-','')}-${new Date().getFullYear()}`
+  const issueDate = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' })
+  const fullyPaid = balance <= 0
+
+  const payRows = payments.map((p, i) => `
+    <tr style="border-bottom:1px solid #F1F5F9;">
+      <td style="padding:12px 16px;font-size:13px;color:#64748b;">${String(i+1).padStart(2,'0')}</td>
+      <td style="padding:12px 16px;font-size:13px;color:#334155;">${fmtDt(p.paid_at || p.created_at)}</td>
+      <td style="padding:12px 16px;font-size:13px;color:#334155;text-transform:capitalize;">${p.method || 'Razorpay'}</td>
+      <td style="padding:12px 16px;font-size:13px;color:#334155;">${p.type === 'balance' ? 'Balance' : 'Advance'}</td>
+      <td style="padding:12px 16px;font-size:13px;font-weight:700;color:#059669;text-align:right;">${fmt(p.amount)}</td>
     </tr>`).join('')
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/>
-  <style>
-    body{font-family:Inter,Arial,sans-serif;background:#F1F5F9;margin:0;padding:20px;color:#0F172A}
-    .wrap{max-width:620px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-    .header{background:linear-gradient(135deg,#4F6EF7,#6366F1);padding:32px;color:#fff}
-    .header h1{margin:0 0 4px;font-size:22px;font-weight:900}
-    .header p{margin:0;opacity:.85;font-size:14px}
-    .section{padding:24px 32px;border-bottom:1px solid #E2E8F0}
-    .section:last-child{border-bottom:none}
-    .section-title{font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
-    .row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px}
-    .row .label{color:#64748B}.row .value{font-weight:700}
-    .total-box{background:#F8FAFC;border-radius:12px;padding:16px 20px;margin-top:8px}
-    .total-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #E2E8F0;font-size:14px}
-    .total-row:last-child{border-bottom:none;padding-top:10px;font-size:16px;font-weight:900;color:#4F6EF7}
-    .footer{background:#F8FAFC;padding:20px 32px;text-align:center;font-size:12px;color:#94A3B8}
-    table{width:100%;border-collapse:collapse}thead th{padding:8px 12px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;text-align:left;background:#F8FAFC;border-bottom:1px solid #E2E8F0}
-  </style></head><body>
-  <div class="wrap">
-    <div class="header">
-      <h1>🧾 Invoice</h1>
-      <p>Ref: <strong>${booking?.booking_ref || '—'}</strong> &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</p>
-    </div>
-    <div class="section">
-      <div class="section-title">Customer</div>
-      <div class="row"><span class="label">Name</span><span class="value">${booking?.customer_name || '—'}</span></div>
-      <div class="row"><span class="label">Phone</span><span class="value">${booking?.customer_phone || '—'}</span></div>
-      <div class="row"><span class="label">Destination</span><span class="value">${booking?.destination || '—'}</span></div>
-      <div class="row"><span class="label">Travel Date</span><span class="value">${booking?.travel_date ? new Date(booking.travel_date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—'}</span></div>
-    </div>
-    ${payments.length > 0 ? `<div class="section">
-      <div class="section-title">Payment History</div>
-      <table><thead><tr><th>Date</th><th>Amount</th><th>Method</th></tr></thead>
-      <tbody>${payRows}</tbody></table>
-    </div>` : ''}
-    <div class="section">
-      <div class="section-title">Summary</div>
-      <div class="total-box">
-        <div class="total-row"><span>Total Package</span><span>${fmt(booking?.total_amount)}</span></div>
-        <div class="total-row"><span>Total Paid</span><span style="color:#059669">${fmt(paidTotal)}</span></div>
-        <div class="total-row"><span>Balance Due</span><span style="color:${balance > 0 ? '#F59E0B' : '#059669'}">${fmt(balance)}</span></div>
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Invoice — ${invoiceNo}</title>
+</head>
+<body style="margin:0;padding:0;background:#EEF2FF;font-family:'Helvetica Neue',Arial,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2FF;padding:32px 16px;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(79,110,247,.12);">
+
+  <!-- TOP STRIPE -->
+  <tr><td style="background:linear-gradient(90deg,#4F6EF7 0%,#7C3AED 100%);height:6px;"></td></tr>
+
+  <!-- HEADER -->
+  <tr>
+    <td style="padding:36px 40px 28px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td>
+            <div style="font-size:26px;font-weight:900;color:#1E293B;letter-spacing:-0.5px;">Shera Travels</div>
+            <div style="font-size:13px;color:#64748B;margin-top:4px;">Kashmir Tourism · Budgam, J&K, India</div>
+            <div style="font-size:13px;color:#64748B;">📞 +91-9149406965 &nbsp;·&nbsp; sheratravels21@gmail.com</div>
+          </td>
+          <td align="right" valign="top">
+            <div style="background:#EEF2FF;border-radius:12px;padding:16px 20px;display:inline-block;text-align:right;">
+              <div style="font-size:11px;font-weight:800;color:#6366F1;text-transform:uppercase;letter-spacing:1px;">INVOICE</div>
+              <div style="font-size:18px;font-weight:900;color:#1E293B;margin-top:4px;">${invoiceNo}</div>
+              <div style="font-size:12px;color:#64748B;margin-top:4px;">${issueDate}</div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- DIVIDER -->
+  <tr><td style="padding:0 40px;"><div style="height:1px;background:#E2E8F0;"></div></td></tr>
+
+  <!-- BILLED TO + TRIP INFO -->
+  <tr>
+    <td style="padding:28px 40px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td width="48%" valign="top">
+            <div style="font-size:11px;font-weight:800;color:#6366F1;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">BILLED TO</div>
+            <div style="font-size:16px;font-weight:800;color:#1E293B;">${booking?.customer_name || '—'}</div>
+            <div style="font-size:13px;color:#64748B;margin-top:4px;">${booking?.customer_phone || ''}</div>
+            <div style="font-size:13px;color:#64748B;">${booking?.customer_email || ''}</div>
+          </td>
+          <td width="4%"></td>
+          <td width="48%" valign="top">
+            <div style="font-size:11px;font-weight:800;color:#6366F1;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">TRIP DETAILS</div>
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="font-size:12px;color:#94A3B8;padding-bottom:6px;padding-right:12px;">Destination</td>
+                <td style="font-size:13px;font-weight:700;color:#1E293B;padding-bottom:6px;">${booking?.destination || '—'}</td>
+              </tr>
+              <tr>
+                <td style="font-size:12px;color:#94A3B8;padding-bottom:6px;padding-right:12px;">Travel Date</td>
+                <td style="font-size:13px;font-weight:700;color:#1E293B;padding-bottom:6px;">${fmtDt(booking?.travel_date)}</td>
+              </tr>
+              <tr>
+                <td style="font-size:12px;color:#94A3B8;padding-bottom:6px;padding-right:12px;">Return Date</td>
+                <td style="font-size:13px;font-weight:700;color:#1E293B;padding-bottom:6px;">${fmtDt(booking?.return_date)}</td>
+              </tr>
+              <tr>
+                <td style="font-size:12px;color:#94A3B8;padding-right:12px;">Pax</td>
+                <td style="font-size:13px;font-weight:700;color:#1E293B;">${booking?.adults||1} Adults${booking?.children ? `, ${booking.children} Children` : ''}${booking?.infants ? `, ${booking.infants} Infants` : ''}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- PACKAGE ROW -->
+  <tr>
+    <td style="padding:0 40px 28px;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;overflow:hidden;border:1px solid #E2E8F0;">
+        <tr style="background:#F8FAFC;">
+          <td style="padding:12px 16px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.8px;">Description</td>
+          <td style="padding:12px 16px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.8px;text-align:right;">Amount</td>
+        </tr>
+        <tr>
+          <td style="padding:16px;font-size:14px;color:#334155;">
+            <div style="font-weight:700;color:#1E293B;">${booking?.destination || 'Kashmir'} Tour Package</div>
+            <div style="font-size:12px;color:#94A3B8;margin-top:3px;">Booking Ref: ${booking?.booking_ref || '—'} &nbsp;·&nbsp; ${booking?.nights || ''}N/${(booking?.nights ? Number(booking.nights)+1 : '')}D</div>
+          </td>
+          <td style="padding:16px;font-size:15px;font-weight:800;color:#1E293B;text-align:right;">${fmt(booking?.total_amount)}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  ${payments.length > 0 ? `
+  <!-- PAYMENT HISTORY -->
+  <tr>
+    <td style="padding:0 40px 28px;">
+      <div style="font-size:11px;font-weight:800;color:#6366F1;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">PAYMENT HISTORY</div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;overflow:hidden;border:1px solid #E2E8F0;">
+        <tr style="background:#F8FAFC;">
+          <th style="padding:10px 16px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;text-align:left;">#</th>
+          <th style="padding:10px 16px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;text-align:left;">Date</th>
+          <th style="padding:10px 16px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;text-align:left;">Method</th>
+          <th style="padding:10px 16px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;text-align:left;">Type</th>
+          <th style="padding:10px 16px;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;text-align:right;">Amount</th>
+        </tr>
+        ${payRows}
+      </table>
+    </td>
+  </tr>` : ''}
+
+  <!-- TOTALS -->
+  <tr>
+    <td style="padding:0 40px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td width="55%"></td>
+          <td width="45%">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;overflow:hidden;">
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:12px 16px;font-size:13px;color:#64748B;">Package Total</td>
+                <td style="padding:12px 16px;font-size:13px;font-weight:700;color:#1E293B;text-align:right;">${fmt(booking?.total_amount)}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:12px 16px;font-size:13px;color:#64748B;">Total Paid</td>
+                <td style="padding:12px 16px;font-size:13px;font-weight:700;color:#059669;text-align:right;">${fmt(paidTotal)}</td>
+              </tr>
+              <tr style="background:${fullyPaid ? '#ECFDF5' : '#FFF7ED'};">
+                <td style="padding:14px 16px;font-size:14px;font-weight:800;color:${fullyPaid ? '#059669' : '#D97706'};">Balance Due</td>
+                <td style="padding:14px 16px;font-size:16px;font-weight:900;color:${fullyPaid ? '#059669' : '#D97706'};text-align:right;">${fmt(balance)}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- STATUS BADGE -->
+  <tr>
+    <td style="padding:0 40px 32px;text-align:center;">
+      <div style="display:inline-block;padding:10px 28px;border-radius:100px;background:${fullyPaid ? '#ECFDF5' : '#FFF7ED'};border:2px solid ${fullyPaid ? '#6EE7B7' : '#FCD34D'};">
+        <span style="font-size:14px;font-weight:800;color:${fullyPaid ? '#059669' : '#D97706'};">
+          ${fullyPaid ? '✅ Fully Paid — Thank you!' : `⏳ Balance Due: ${fmt(balance)}`}
+        </span>
       </div>
-    </div>
-    <div class="footer"><strong>Shera Travels</strong><br/>📞 +91-9149406965 &nbsp;|&nbsp; ✉ sheratravels21@gmail.com</div>
-  </div></body></html>`
+    </td>
+  </tr>
+
+  <!-- BOTTOM STRIPE + FOOTER -->
+  <tr><td style="background:linear-gradient(90deg,#4F6EF7 0%,#7C3AED 100%);height:4px;"></td></tr>
+  <tr>
+    <td style="padding:20px 40px;background:#F8FAFC;text-align:center;">
+      <div style="font-size:12px;color:#94A3B8;line-height:1.8;">
+        <strong style="color:#475569;">Shera Travels</strong> &nbsp;·&nbsp; Budgam, Jammu &amp; Kashmir, India<br/>
+        📞 +91-9149406965 &nbsp;·&nbsp; ✉ sheratravels21@gmail.com<br/>
+        <em style="font-size:11px;">Thank you for choosing Shera Travels — your Kashmir journey awaits!</em>
+      </div>
+    </td>
+  </tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`
 }
 
 // ── New Booking Confirmation HTML (customer-facing) ──────────
