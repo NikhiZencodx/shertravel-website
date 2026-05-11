@@ -409,20 +409,32 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── Itinerary email (customer + admin) ───────────────────
+  // ── Itinerary email (customer + admin copy) ─────────────
   if (type === 'itinerary') {
     if (!booking?.customer_email) return res.status(400).json({ error: 'customer_email required' })
     const { pkg = {}, days = [], prices = [] } = req.body
+    const sent = []
+    const itinSubject = `Your Personalised Itinerary — ${booking.destination || 'Kashmir'} | Shera Travels`
+    const itinHtml    = itineraryHTML(booking, pkg, days, prices)
+    try {
+      await sendViaResend({ to: booking.customer_email, subject: itinSubject, html: itinHtml })
+      sent.push(`customer: ${booking.customer_email}`)
+    } catch (err) {
+      console.warn('Itinerary customer email failed:', err.message)
+      sent.push(`customer_failed: ${err.message}`)
+    }
+    // Always send a copy to admin so they know it was requested
     try {
       await sendViaResend({
-        to:      booking.customer_email,
-        subject: `Your Personalised Itinerary — ${booking.destination || 'Kashmir'} | Shera Travels`,
-        html:    itineraryHTML(booking, pkg, days, prices),
+        to:      ADMIN_EMAIL,
+        subject: `📄 Itinerary Sent — ${booking.destination || 'Kashmir'} | ${booking.customer_name}`,
+        html:    itinHtml,
       })
-      return res.status(200).json({ success: true, sent: [`customer: ${booking.customer_email}`] })
+      sent.push(`admin: ${ADMIN_EMAIL}`)
     } catch (err) {
-      return res.status(500).json({ error: err.message })
+      console.warn('Itinerary admin copy failed:', err.message)
     }
+    return res.status(200).json({ success: true, sent })
   }
 
   // ── Contact form ─────────────────────────────────────────
@@ -447,6 +459,7 @@ export default async function handler(req, res) {
     const sent = []
 
     // ── 1. Customer email ────────────────────────────────────
+    // ── 1. Customer email (non-blocking — may fail if domain not verified) ─
     if (booking.customer_email) {
       let subject, html
       if (resolvedType === 'new_booking') {
@@ -457,8 +470,13 @@ export default async function handler(req, res) {
         html    = customerReceiptHTML({ booking, justPaid, newPaidTotal, newBalance })
       }
       if (html) {
-        await sendViaResend({ to: booking.customer_email, subject, html })
-        sent.push(`customer: ${booking.customer_email}`)
+        try {
+          await sendViaResend({ to: booking.customer_email, subject, html })
+          sent.push(`customer: ${booking.customer_email}`)
+        } catch (custErr) {
+          console.warn('Customer email failed (domain may not be verified):', custErr.message)
+          sent.push(`customer_failed: ${custErr.message}`)
+        }
       }
     }
 
@@ -467,12 +485,17 @@ export default async function handler(req, res) {
       const subject = resolvedType === 'new_booking'
         ? `📋 New Booking — ${booking.booking_ref} | ${booking.customer_name}`
         : `💰 Payment Received — ${booking.booking_ref} | ${fmt(payment?.amount || justPaid)} | ${booking.customer_name}`
-      await sendViaResend({
-        to:      ADMIN_EMAIL,
-        subject,
-        html:    adminNotificationHTML({ type: resolvedType || 'payment', booking, payment: payment || { amount: justPaid } }),
-      })
-      sent.push(`admin: ${ADMIN_EMAIL}`)
+      try {
+        await sendViaResend({
+          to:      ADMIN_EMAIL,
+          subject,
+          html:    adminNotificationHTML({ type: resolvedType || 'payment', booking, payment: payment || { amount: justPaid } }),
+        })
+        sent.push(`admin: ${ADMIN_EMAIL}`)
+      } catch (adminErr) {
+        console.error('Admin email failed:', adminErr.message)
+        sent.push(`admin_failed: ${adminErr.message}`)
+      }
     }
 
     // ── 3. Owner (if different from admin) ───────────────────
@@ -480,12 +503,16 @@ export default async function handler(req, res) {
       const subject = resolvedType === 'new_booking'
         ? `📋 New Booking — ${booking.booking_ref} | ${booking.customer_name}`
         : `💰 Payment — ${booking.booking_ref} | ${fmt(payment?.amount || justPaid)}`
-      await sendViaResend({
-        to:      OWNER_EMAIL,
-        subject,
-        html:    adminNotificationHTML({ type: resolvedType || 'payment', booking, payment: payment || { amount: justPaid } }),
-      })
-      sent.push(`owner: ${OWNER_EMAIL}`)
+      try {
+        await sendViaResend({
+          to:      OWNER_EMAIL,
+          subject,
+          html:    adminNotificationHTML({ type: resolvedType || 'payment', booking, payment: payment || { amount: justPaid } }),
+        })
+        sent.push(`owner: ${OWNER_EMAIL}`)
+      } catch (ownerErr) {
+        console.warn('Owner email failed:', ownerErr.message)
+      }
     }
 
     return res.status(200).json({ success: true, sent })
